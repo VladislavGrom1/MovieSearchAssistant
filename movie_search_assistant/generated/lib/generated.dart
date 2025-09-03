@@ -1,0 +1,74 @@
+//
+// AUTO-GENERATED FILE, DO NOT MODIFY!
+//
+
+export 'package:generated/src/api.dart';
+export 'package:generated/src/auth/api_key_auth.dart';
+export 'package:generated/src/auth/basic_auth.dart';
+export 'package:generated/src/auth/bearer_auth.dart';
+export 'package:generated/src/auth/oauth.dart';
+export 'package:generated/src/serializers.dart';
+export 'package:generated/src/model/date.dart';
+
+export 'package:generated/src/api/api_keys_api.dart';
+export 'package:generated/src/api/films_api.dart';
+export 'package:generated/src/api/kp_users_api.dart';
+export 'package:generated/src/api/media_posts_api.dart';
+export 'package:generated/src/api/persons_api.dart';
+export 'package:generated/src/api/staff_api.dart';
+
+export 'package:generated/src/model/api_error.dart';
+export 'package:generated/src/model/api_key_response.dart';
+export 'package:generated/src/model/api_key_response_daily_quota.dart';
+export 'package:generated/src/model/api_key_response_total_quota.dart';
+export 'package:generated/src/model/award.dart';
+export 'package:generated/src/model/award_person.dart';
+export 'package:generated/src/model/award_response.dart';
+export 'package:generated/src/model/box_office.dart';
+export 'package:generated/src/model/box_office_response.dart';
+export 'package:generated/src/model/company.dart';
+export 'package:generated/src/model/country.dart';
+export 'package:generated/src/model/digital_release_item.dart';
+export 'package:generated/src/model/digital_release_response.dart';
+export 'package:generated/src/model/distribution.dart';
+export 'package:generated/src/model/distribution_country.dart';
+export 'package:generated/src/model/distribution_response.dart';
+export 'package:generated/src/model/episode.dart';
+export 'package:generated/src/model/external_source_response.dart';
+export 'package:generated/src/model/external_source_response_items.dart';
+export 'package:generated/src/model/fact.dart';
+export 'package:generated/src/model/fact_response.dart';
+export 'package:generated/src/model/film.dart';
+export 'package:generated/src/model/film_collection_response.dart';
+export 'package:generated/src/model/film_collection_response_items.dart';
+export 'package:generated/src/model/film_search_by_filters_response.dart';
+export 'package:generated/src/model/film_search_by_filters_response_items.dart';
+export 'package:generated/src/model/film_search_response.dart';
+export 'package:generated/src/model/film_search_response_films.dart';
+export 'package:generated/src/model/film_sequels_and_prequels_response.dart';
+export 'package:generated/src/model/filters_response.dart';
+export 'package:generated/src/model/filters_response_countries.dart';
+export 'package:generated/src/model/filters_response_genres.dart';
+export 'package:generated/src/model/genre.dart';
+export 'package:generated/src/model/image_response.dart';
+export 'package:generated/src/model/image_response_items.dart';
+export 'package:generated/src/model/kinopoisk_user_vote_response.dart';
+export 'package:generated/src/model/kinopoisk_user_vote_response_items.dart';
+export 'package:generated/src/model/media_posts_response.dart';
+export 'package:generated/src/model/media_posts_response_items.dart';
+export 'package:generated/src/model/person_by_name_response.dart';
+export 'package:generated/src/model/person_by_name_response_items.dart';
+export 'package:generated/src/model/person_response.dart';
+export 'package:generated/src/model/person_response_films.dart';
+export 'package:generated/src/model/person_response_spouses.dart';
+export 'package:generated/src/model/premiere_response.dart';
+export 'package:generated/src/model/premiere_response_item.dart';
+export 'package:generated/src/model/related_film_response.dart';
+export 'package:generated/src/model/related_film_response_items.dart';
+export 'package:generated/src/model/review_response.dart';
+export 'package:generated/src/model/review_response_items.dart';
+export 'package:generated/src/model/season.dart';
+export 'package:generated/src/model/season_response.dart';
+export 'package:generated/src/model/staff_response.dart';
+export 'package:generated/src/model/video_response.dart';
+export 'package:generated/src/model/video_response_items.dart';
