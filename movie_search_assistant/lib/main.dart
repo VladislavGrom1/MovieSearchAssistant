@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/infrastructure/navigation/route_manager.dart';
+import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/services/di_init.dart';
-import 'package:movie_search_assistant/view/screens/home_screen.dart';
 import 'package:movie_search_assistant/view/screens/themes/colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -18,15 +19,17 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(412, 927),
       child: GetMaterialApp(
+        initialRoute: Routes.navigationScreen,
+        getPages: RouteManager.getPages(),
         title: 'Movie Search Assistant',
         theme: ThemeData(
-          scaffoldBackgroundColor: AppColors.primaryDarkThemeBlack,
+          scaffoldBackgroundColor: AppColors.primaryThemeBlack,
           appBarTheme: AppBarTheme(
-            backgroundColor: AppColors.secondaryDarkThemeGrey,
+            backgroundColor: AppColors.secondaryThemeGrey,
+            elevation: 0,
           ),
-          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.secondaryDarkThemeGrey),
+          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryScheme),
         ),
-        home: HomeScreen()
         )
     );
   }

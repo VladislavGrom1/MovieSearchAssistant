@@ -6,9 +6,9 @@ import 'package:generated/generated.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 
-class HomeScreenController extends GetxController{
+class SearchHomeScreenController extends GetxController{
 
-  TextEditingController searchFormController = TextEditingController();
+  TextEditingController searchTextEditingController = TextEditingController();
 
   var filteredKeywordFilms = FilmSearchByFiltersResponse((b) => b
     ..total = 0
@@ -26,8 +26,8 @@ class HomeScreenController extends GetxController{
   // TODO: Реализовать, чтобы при одном и том же слове в поиске не происходило повторного запроса к серверу
   Future<void> getKeywordFilms() async{
     try{
-      log(searchFormController.text);
-      filteredKeywordFilms.value = await apiService.getFiltersFilms(searchFormController.text);
+      log(searchTextEditingController.text);
+      filteredKeywordFilms.value = await apiService.getFiltersFilms(searchTextEditingController.text);
     } catch(e){
       log(e.toString());
       rethrow;
