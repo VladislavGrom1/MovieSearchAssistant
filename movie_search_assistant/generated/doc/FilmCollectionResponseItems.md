@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 **genres** | [**BuiltList&lt;Genre&gt;**](Genre.md) |  | [optional] 
 **ratingKinopoisk** | **num** |  | [optional] 
 **ratingImbd** | **num** |  | [optional] 
-**year** | **String** |  | [optional] 
+**year** | **int** |  | [optional] 
 **type** | **String** |  | [optional] 
 **posterUrl** | **String** |  | [optional] 
 **posterUrlPreview** | **String** |  | [optional] 

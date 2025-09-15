@@ -10,16 +10,28 @@ class SearchHomeScreenController extends GetxController{
 
   TextEditingController searchTextEditingController = TextEditingController();
 
+  var isLoading = false.obs;
+
+  RxMap<String, FilmCollectionResponse> collectionsFilms = <String, FilmCollectionResponse>{}.obs;
+  List<String> collectionNames = ["TOP_POPULAR_MOVIES", "POPULAR_SERIES", "TOP_250_MOVIES", "TOP_250_TV_SHOWS"];
+
   var filteredKeywordFilms = FilmSearchByFiltersResponse((b) => b
     ..total = 0
     ..totalPages = 0
     ..items = ListBuilder([])
   ).obs;
 
-  var films = PremiereResponse((b) => b
-    ..total = 0
-    ..items = ListBuilder([])
-  ).obs;
+  @override
+  void onInit() async{
+    isLoading.value = true;
+    
+    for(var collectionName in collectionNames) {
+      await getCollectionsFilms(collectionName);
+    }
+
+    isLoading.value = false;
+    super.onInit();
+  }
 
   GlobalApiService apiService = Get.find<GlobalApiService>();
 
@@ -34,12 +46,17 @@ class SearchHomeScreenController extends GetxController{
     }
   }
 
-  Future<void> getPremiereFilms() async{
+  Future<void> getCollectionsFilms(String nameCollection) async {
+    isLoading.value = true;
     try{
-      films.value = await apiService.getPremiereFilms();
+      FilmCollectionResponse responseData = await apiService.getCollectionFilms(nameCollection);
+      collectionsFilms[nameCollection] = responseData;
+      collectionsFilms.refresh();
     } catch(e){
       log(e.toString());
       rethrow;
+    } finally{
+      isLoading.value = false;
     }
   }
 

@@ -19,12 +19,13 @@ class GlobalApiService extends GetxController{
     super.onInit();
   }
 
-  // TODO: Реализовать передачу фильтров
-  Future<FilmSearchByFiltersResponse> getFiltersFilms(String keyword) async{
+  Future<FilmCollectionResponse> getCollectionFilms(String collectionName) async{
     try{
-      Response<FilmSearchByFiltersResponse?> responseData = await filmsApi.apiV22FilmsGet(
-        keyword: keyword,
-        headers: {"X-API-KEY": "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"}
+      log(collectionName);
+      Response<FilmCollectionResponse> responseData = await filmsApi.apiV22FilmsCollectionsGet(
+        headers: {"X-API-KEY": "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"},
+        type: collectionName,
+        page: 1
       );
       return responseData.data!;
     } on DioException catch(e){
@@ -33,13 +34,13 @@ class GlobalApiService extends GetxController{
     }
   }
 
-  // TODO: Реализовать параметры Год и Месяц
-  Future<PremiereResponse> getPremiereFilms() async {
+  // TODO: Реализовать передачу фильтров
+  Future<FilmSearchByFiltersResponse> getFiltersFilms(String keyword) async{
     try{
-      Response<PremiereResponse>? responseData = await filmsApi.apiV22FilmsPremieresGet(
-        year: 2010, 
-        month: "APRIL",
-        headers: {"X-API-KEY": "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"});
+      Response<FilmSearchByFiltersResponse?> responseData = await filmsApi.apiV22FilmsGet(
+        keyword: keyword,
+        headers: {"X-API-KEY": "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"}
+      );
       return responseData.data!;
     } on DioException catch(e){
       log(e.message.toString());

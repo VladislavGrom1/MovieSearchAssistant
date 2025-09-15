@@ -17,9 +17,9 @@ class RouteManager {
       // GetPage(
       //   name: Routes.searchHomeScreen,
       //   page: () => SearchHomeScreen()),
-      GetPage(
-        name: Routes.searchCategoryScreen,
-        page: () => SearchCategoryScreen()),
+      // GetPage(
+      //   name: Routes.searchCategoryScreen,
+      //   page: () => SearchCategoryScreen(nameCollection: "")),
       // WillWatching Tab
       // GetPage(
       //   name: Routes.willWatchingScreen, 

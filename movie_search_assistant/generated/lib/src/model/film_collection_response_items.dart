@@ -55,7 +55,7 @@ abstract class FilmCollectionResponseItems
   num? get ratingImbd;
 
   @BuiltValueField(wireName: r'year')
-  String? get year;
+  int? get year;
 
   @BuiltValueField(wireName: r'type')
   FilmCollectionResponseItemsTypeEnum? get type;
@@ -157,7 +157,7 @@ class _$FilmCollectionResponseItemsSerializer
       yield r'year';
       yield serializers.serialize(
         object.year,
-        specifiedType: const FullType.nullable(String),
+        specifiedType: const FullType.nullable(int),
       );
     }
     if (object.type != null) {
@@ -270,8 +270,8 @@ class _$FilmCollectionResponseItemsSerializer
         case r'year':
           final valueDes = serializers.deserialize(
             value,
-            specifiedType: const FullType.nullable(String),
-          ) as String?;
+            specifiedType: const FullType.nullable(int),
+          ) as int?;
           if (valueDes == null) continue;
           result.year = valueDes;
           break;

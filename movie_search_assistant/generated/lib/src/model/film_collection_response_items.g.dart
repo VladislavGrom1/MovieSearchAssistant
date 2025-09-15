@@ -118,7 +118,7 @@ class _$FilmCollectionResponseItems extends FilmCollectionResponseItems {
   @override
   final num? ratingImbd;
   @override
-  final String? year;
+  final int? year;
   @override
   final FilmCollectionResponseItemsTypeEnum? type;
   @override
@@ -250,9 +250,9 @@ class FilmCollectionResponseItemsBuilder
   num? get ratingImbd => _$this._ratingImbd;
   set ratingImbd(num? ratingImbd) => _$this._ratingImbd = ratingImbd;
 
-  String? _year;
-  String? get year => _$this._year;
-  set year(String? year) => _$this._year = year;
+  int? _year;
+  int? get year => _$this._year;
+  set year(int? year) => _$this._year = year;
 
   FilmCollectionResponseItemsTypeEnum? _type;
   FilmCollectionResponseItemsTypeEnum? get type => _$this._type;

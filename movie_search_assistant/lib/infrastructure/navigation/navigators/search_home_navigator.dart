@@ -14,9 +14,10 @@ class SearchHomeNavigator extends StatelessWidget{
       key: Get.nestedKey(NavigatorIds.searchHome),
       onGenerateRoute: (settings) {
         if(settings.name == Routes.searchCategoryScreen){
+          String nameCollection = settings.arguments.toString();
           return GetPageRoute(
             settings: settings,
-            page: () => SearchCategoryScreen(),
+            page: () => SearchCategoryScreen(nameCollection: nameCollection),
           );
         } else{
           return GetPageRoute(

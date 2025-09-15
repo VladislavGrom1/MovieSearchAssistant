@@ -25,17 +25,17 @@ class CustomNavigationBar extends StatelessWidget {
               label: "Поиск",
             ),
             NavigationDestination(
-              icon: Icon(Icons.person_2_outlined),
+              icon: Icon(Icons.bookmark_border),
               selectedIcon: Icon(
-                Icons.person_2,
+                Icons.bookmark,
                 color: Colors.white,
               ),
               label: "Буду смотреть",
             ),
             NavigationDestination(
-              icon: Icon(Icons.person_2_outlined),
+              icon: Icon(Icons.video_library_outlined),
               selectedIcon: Icon(
-                Icons.person_2,
+                Icons.video_library,
                 color: Colors.white,
               ),
               label: "Библиотека",

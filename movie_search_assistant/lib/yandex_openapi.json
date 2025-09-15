@@ -3177,9 +3177,9 @@
             "example": 7.9
           },
           "year": {
-            "type": "string",
+            "type": "integer",
             "nullable": true,
-            "example": "2012"
+            "example": 2012
           },
           "type": {
             "type": "string",

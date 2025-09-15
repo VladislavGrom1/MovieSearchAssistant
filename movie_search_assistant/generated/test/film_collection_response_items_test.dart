@@ -47,7 +47,7 @@ void main() {
       // TODO
     });
 
-    // String year
+    // int year
     test('to test the property `year`', () async {
       // TODO
     });
