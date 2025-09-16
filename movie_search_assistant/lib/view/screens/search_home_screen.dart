@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/controllers/search_home_screen_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
-import 'package:movie_search_assistant/view/screens/search_category_screen.dart';
 import 'package:movie_search_assistant/view/screens/themes/colors.dart';
 import 'package:movie_search_assistant/view/screens/themes/custom_text_styles.dart';
 import 'package:movie_search_assistant/view/screens/widgets/custom_search_bar.dart';
@@ -28,37 +25,11 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
                   CustomSearchBar(
                       textEditingController:
                           controller.searchTextEditingController),
-                  // SearchBar(
-                  //   shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.w))),
-                  //   backgroundColor: WidgetStatePropertyAll(AppColors.secondaryThemeGrey),
-                  //   elevation: WidgetStatePropertyAll(0),
-                  //   leading: Icon(Icons.search, color: AppColors.primaryTextGrey),
-                  //   trailing: {
-                  //     IconButton(
-                  //       onPressed: () {},
-                  //       icon: Icon(Icons.filter_alt_outlined, color: AppColors.primaryTextGrey)),
-                  //   },
-                  //   textInputAction: TextInputAction.search,
-                  //   controller: controller.searchFormController,
-                  //   onTapOutside: (event) => {
-                  //     controller.searchFormController
-                  //   },
-                  //   onSubmitted: (value) async {
-                  //     if(value.isNotEmpty){
-                  //       try{
-                  //         //controller.getKeywordFilms();
-                  //         controller.getPremiereFilms();
-                  //       } catch(e){
-                  //         log(e.toString());
-                  //       }
-                  //     }
-                  //   },
-                  // ),
                   SizedBox(height: 13.h),
                   Expanded(
                     child: ListView.separated(
                         itemBuilder: (context, index) => categoryFilms(controller.collectionNames[index]), 
-                        separatorBuilder: (context, index) => SizedBox(height: 16.w), 
+                        separatorBuilder: (context, index) => SizedBox(height: 16.h), 
                         itemCount: controller.collectionNames.length)
                     ),
               ]

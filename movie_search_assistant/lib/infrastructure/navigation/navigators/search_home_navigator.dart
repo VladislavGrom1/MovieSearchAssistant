@@ -4,6 +4,7 @@ import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/screens/search_category_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_home_screen.dart';
+import 'package:movie_search_assistant/view/screens/search_keyword_screen.dart';
 
 class SearchHomeNavigator extends StatelessWidget{
   SearchHomeNavigator({super.key});
@@ -13,6 +14,13 @@ class SearchHomeNavigator extends StatelessWidget{
     return Navigator(
       key: Get.nestedKey(NavigatorIds.searchHome),
       onGenerateRoute: (settings) {
+        if(settings.name == Routes.seatchKeywordScreen){
+          String keyword = settings.arguments.toString();
+          return GetPageRoute(
+            settings: settings,
+            page: () => SearchKeywordScreen(keyword: keyword)
+          );
+        }
         if(settings.name == Routes.searchCategoryScreen){
           String nameCollection = settings.arguments.toString();
           return GetPageRoute(

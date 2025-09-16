@@ -8,18 +8,14 @@ import 'package:movie_search_assistant/services/global_api_service.dart';
 
 class SearchHomeScreenController extends GetxController{
 
+  GlobalApiService apiService = Get.find<GlobalApiService>();
+
   TextEditingController searchTextEditingController = TextEditingController();
 
   var isLoading = false.obs;
 
   RxMap<String, FilmCollectionResponse> collectionsFilms = <String, FilmCollectionResponse>{}.obs;
   List<String> collectionNames = ["TOP_POPULAR_MOVIES", "POPULAR_SERIES", "TOP_250_MOVIES", "TOP_250_TV_SHOWS"];
-
-  var filteredKeywordFilms = FilmSearchByFiltersResponse((b) => b
-    ..total = 0
-    ..totalPages = 0
-    ..items = ListBuilder([])
-  ).obs;
 
   @override
   void onInit() async{
@@ -33,18 +29,8 @@ class SearchHomeScreenController extends GetxController{
     super.onInit();
   }
 
-  GlobalApiService apiService = Get.find<GlobalApiService>();
-
-  // TODO: Реализовать, чтобы при одном и том же слове в поиске не происходило повторного запроса к серверу
-  Future<void> getKeywordFilms() async{
-    try{
-      log(searchTextEditingController.text);
-      filteredKeywordFilms.value = await apiService.getFiltersFilms(searchTextEditingController.text);
-    } catch(e){
-      log(e.toString());
-      rethrow;
-    }
-  }
+  
+  
 
   Future<void> getCollectionsFilms(String nameCollection) async {
     isLoading.value = true;

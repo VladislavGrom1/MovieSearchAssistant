@@ -21,7 +21,6 @@ class GlobalApiService extends GetxController{
 
   Future<FilmCollectionResponse> getCollectionFilms(String collectionName) async{
     try{
-      log(collectionName);
       Response<FilmCollectionResponse> responseData = await filmsApi.apiV22FilmsCollectionsGet(
         headers: {"X-API-KEY": "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"},
         type: collectionName,
