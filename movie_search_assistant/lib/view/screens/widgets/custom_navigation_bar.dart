@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/controllers/navigation_controller.dart';
 import 'package:movie_search_assistant/view/screens/themes/colors.dart';
+import 'package:movie_search_assistant/view/screens/themes/custom_text_styles.dart';
 
 class CustomNavigationBar extends StatelessWidget {
   const CustomNavigationBar({super.key});
@@ -14,7 +15,7 @@ class CustomNavigationBar extends StatelessWidget {
           elevation: 10,
           selectedIndex: NavigationController.to.currentIndex.value,
           onDestinationSelected: (index) => NavigationController.to.changeIndex(index),
-          labelTextStyle: WidgetStatePropertyAll(TextStyle(color: AppColors.primaryTextGrey)),
+          labelTextStyle: WidgetStatePropertyAll(CustomTextStyles.m3LabelMedium()),
           destinations: [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),

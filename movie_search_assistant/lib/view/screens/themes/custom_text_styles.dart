@@ -51,4 +51,14 @@ class CustomTextStyles {
       color: color ??AppColors.primaryTextGrey,
     );
   }
+
+  static TextStyle m3LabelMedium({Color? color}){
+    return TextStyle(
+      fontSize: 12,
+      height: 12/16,
+      letterSpacing: 0.5,
+      fontWeight: FontWeight.w500,
+      color: color ?? AppColors.primaryTextGrey
+    );
+  }
 }
