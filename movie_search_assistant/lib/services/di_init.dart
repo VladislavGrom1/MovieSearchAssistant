@@ -10,7 +10,5 @@ class DiInit {
     Get.put(NavigationController());
     Get.put(GlobalApiService());
     Get.put(SearchHomeScreenController());
-    Get.put(SearchCategoryController());
-    Get.put(SearchKeywordController());
   }
 }

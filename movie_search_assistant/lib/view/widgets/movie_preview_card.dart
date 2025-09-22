@@ -1,13 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generated/generated.dart';
-import 'package:movie_search_assistant/view/screens/themes/colors.dart';
-import 'package:movie_search_assistant/view/screens/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/view/themes/colors.dart';
+import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 
 class MoviePreviewCard extends StatelessWidget {
   MoviePreviewCard({super.key, required this.film});
 
-  FilmCollectionResponseItems film;
+  FilmCollectionResponseItems? film;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +17,7 @@ class MoviePreviewCard extends StatelessWidget {
       children: [
         Container(
           height: 140.h,
+          width: 90.w,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.w),
           ),
@@ -23,9 +25,13 @@ class MoviePreviewCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(16.w),
-                child: Image.network(
-                  film.posterUrl.toString(),
-                  fit: BoxFit.contain,
+                child: film == null 
+                ? Container(color: AppColors.primaryTextGrey)
+                : SizedBox.expand(
+                  child: CachedNetworkImage(
+                    imageUrl: film!.posterUrl.toString(),
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
               // TODO: Разработать логику отображения иконки "Закладка"
@@ -44,16 +50,40 @@ class MoviePreviewCard extends StatelessWidget {
               //     ),
               // ),
               // TODO: Разработать логику отображения иконки "Рейтинг"
-              ratingIcon(film.ratingKinopoisk),
+              film == null 
+              ? Positioned(
+                bottom: 8.h,
+                right: 8.w,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.ratingGrey,
+                    borderRadius: BorderRadius.circular(5.0.h),
+                  ),
+                  width: 22.w,
+                  height: 20.h,
+                  child: Center(
+                    child: Text("",
+                        style: CustomTextStyles.m3LabelSmall(color: Colors.white)),
+                  ),
+                ),
+              )
+              : ratingIcon(film!.ratingKinopoisk),
             ],
           ),
         ),
         SizedBox(height: 10.h),
-        SizedBox(
+        film == null 
+        ? SizedBox(
+          width: 96.w,
+          child: Container(
+            color: AppColors.primaryTextGrey,
+          ),
+        )
+        : SizedBox(
           width: 96.w,
           child: Text(
               overflow: TextOverflow.ellipsis,
-              film.nameRu.toString(),
+              film!.nameRu == null || film!.nameRu!.isEmpty ? film!.nameOriginal.toString() : film!.nameRu.toString(),
               maxLines: 3,
               style: CustomTextStyles.m3LabelLarge()),
         ),

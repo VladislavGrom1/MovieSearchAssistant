@@ -3,9 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
-import 'package:movie_search_assistant/view/screens/themes/colors.dart';
+import 'package:movie_search_assistant/view/themes/colors.dart';
 
-import '../../../infrastructure/navigation/routes.dart';
+import '../../infrastructure/navigation/routes.dart';
 
 // TODO: Разобраться с очисткой TextFormField (неправильно перерисовывается виджет при unfocus)
 

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
+import 'package:movie_search_assistant/controllers/search_category_controller.dart';
+import 'package:movie_search_assistant/controllers/search_keyword_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/screens/search_category_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_home_screen.dart';
@@ -16,16 +18,28 @@ class SearchHomeNavigator extends StatelessWidget{
       onGenerateRoute: (settings) {
         if(settings.name == Routes.seatchKeywordScreen){
           String keyword = settings.arguments.toString();
+
+          if (Get.isRegistered<SearchKeywordController>()) {
+            Get.delete<SearchKeywordController>();
+          }
+
+          Get.put(SearchKeywordController(keyword: keyword));
           return GetPageRoute(
             settings: settings,
             page: () => SearchKeywordScreen(keyword: keyword)
           );
         }
-        if(settings.name == Routes.searchCategoryScreen){
-          String nameCollection = settings.arguments.toString();
+        if(settings.name == Routes.searchCategoryScreen) {
+          String collectionName = settings.arguments.toString();
+
+          if (Get.isRegistered<SearchCategoryController>()) {
+            Get.delete<SearchCategoryController>();
+          }
+          
+          Get.put(SearchCategoryController(collectionName: collectionName));
           return GetPageRoute(
             settings: settings,
-            page: () => SearchCategoryScreen(nameCollection: nameCollection),
+            page: () => SearchCategoryScreen(),
           );
         } else{
           return GetPageRoute(

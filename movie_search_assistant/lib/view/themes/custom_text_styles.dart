@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_search_assistant/view/screens/themes/colors.dart';
+import 'package:movie_search_assistant/view/themes/colors.dart';
 
 class CustomTextStyles {
   

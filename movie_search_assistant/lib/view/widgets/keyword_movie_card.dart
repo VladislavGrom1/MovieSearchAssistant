@@ -1,14 +1,16 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generated/generated.dart';
-import 'package:movie_search_assistant/view/screens/themes/colors.dart';
-import 'package:movie_search_assistant/view/screens/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/models/film_card.dart';
+import 'package:movie_search_assistant/view/themes/colors.dart';
+import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 
-class MovieCard extends StatelessWidget{
-  MovieCard({super.key, required this.film});
+class KeywordMovieCard extends StatelessWidget{
+  KeywordMovieCard({super.key, required this.film});
 
-  FilmSearchByFiltersResponseItems film;
+  FilmSearchByFiltersResponseItems? film;
 
   @override
   Widget build(BuildContext context){
@@ -19,6 +21,7 @@ class MovieCard extends StatelessWidget{
         children: [
           Container(
                 height: 140.h,
+                width: 100.w,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16.w),
                   color: AppColors.primaryTextGrey,
@@ -26,19 +29,36 @@ class MovieCard extends StatelessWidget{
                 child: Stack(
                   alignment: AlignmentGeometry.center,
                   children: [
-                    SizedBox(
-                      height: 140.h,
-                      width: 100.w,
-                      child: ClipRRect(
+                    ClipRRect(
                         borderRadius: BorderRadius.circular(16.w),
-                        child: Image.network(
-                          film.posterUrl.toString(),
-                          fit: BoxFit.cover,
+                        child: film == null
+                        ? Container(color: AppColors.ratingGrey)
+                        : SizedBox.expand(
+                          child: CachedNetworkImage(
+                            imageUrl: film!.posterUrl.toString(),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
                     // TODO: Разработать логику отображения иконки "Рейтинг"
-                    ratingIcon(film.ratingKinopoisk),
+                    film == null 
+                    ? Positioned(
+                      bottom: 8.h,
+                      right: 8.w,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.ratingGrey,
+                          borderRadius: BorderRadius.circular(5.0.h),
+                        ),
+                        width: 22.w,
+                        height: 20.h,
+                        child: Center(
+                          child: Text("",
+                              style: CustomTextStyles.m3LabelSmall(color: Colors.white)),
+                        ),
+                      ),
+                    )
+                    : ratingIcon(film!.ratingKinopoisk),
                   ],
                 ),
               ),
@@ -49,24 +69,32 @@ class MovieCard extends StatelessWidget{
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(height: 5.h),
-                Text(
-                  film.nameRu.toString(), 
+                film == null
+                ? Container(color: AppColors.ratingGrey)
+                : Text(
+                  film!.nameRu == null || film!.nameRu!.isEmpty ? film!.nameOriginal.toString() : film!.nameRu.toString(), 
                   style: CustomTextStyles.m3TitleLarge2(),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2),
                 SizedBox(height: 10.h),
-                Text(
-                  film.nameOriginal == null || film.nameOriginal!.isEmpty ? "-" : film.nameOriginal.toString(),
+                film == null
+                ? Container(color: AppColors.ratingGrey)
+                : Text(
+                  film!.nameOriginal == null || film!.nameOriginal!.isEmpty ? "-" : film!.nameOriginal.toString(),
                   style: CustomTextStyles.m3BodySmall(),
                 ),
                 SizedBox(height: 10.h),
-                Text(
-                  film.countries == null || film.countries!.isEmpty ? "-" : getCountriesValue(film.countries!),
+                film == null
+                ? Container(color: AppColors.ratingGrey)
+                : Text(
+                  film!.countries == null || film!.countries!.isEmpty ? "-" : getCountriesValue(film!.countries!),
                   style: CustomTextStyles.m3BodySmall(),
                 ),
                 SizedBox(height: 10.h),
-                Text(
-                  film.genres == null || film.genres!.isEmpty ? "Нет данных" : getGenresValue(film.genres!),
+                film == null
+                ? Container(color: AppColors.ratingGrey)
+                : Text(
+                  film!.genres == null || film!.genres!.isEmpty ? "Нет данных" : getGenresValue(film!.genres!),
                   style: CustomTextStyles.m3BodySmall(),
                 )
               ]

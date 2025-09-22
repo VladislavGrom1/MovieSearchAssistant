@@ -19,12 +19,12 @@ class GlobalApiService extends GetxController{
     super.onInit();
   }
 
-  Future<FilmCollectionResponse> getCollectionFilms(String collectionName) async{
+  Future<FilmCollectionResponse> getCollectionFilms(String collectionName, int page) async{
     try{
       Response<FilmCollectionResponse> responseData = await filmsApi.apiV22FilmsCollectionsGet(
         headers: {"X-API-KEY": "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"},
         type: collectionName,
-        page: 1
+        page: page
       );
       return responseData.data!;
     } on DioException catch(e){
@@ -34,10 +34,11 @@ class GlobalApiService extends GetxController{
   }
 
   // TODO: Реализовать передачу фильтров
-  Future<FilmSearchByFiltersResponse> getFiltersFilms(String keyword) async{
+  Future<FilmSearchByFiltersResponse> getFiltersFilms(String keyword, int page) async{
     try{
       Response<FilmSearchByFiltersResponse?> responseData = await filmsApi.apiV22FilmsGet(
         keyword: keyword,
+        page: page,
         headers: {"X-API-KEY": "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"}
       );
       return responseData.data!;

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/controllers/search_category_controller.dart';
-import 'package:movie_search_assistant/view/screens/themes/colors.dart';
-import 'package:movie_search_assistant/view/screens/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/view/themes/colors.dart';
+import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/view/widgets/category_movie_card.dart';
 
 class SearchCategoryScreen extends GetView<SearchCategoryController>{
-  SearchCategoryScreen({super.key, required this.nameCollection});
+  SearchCategoryScreen({super.key});
 
-  final String nameCollection;
+  final PageStorageBucket _bucket = PageStorageBucket();
+  final PageStorageKey _listViewKey = const PageStorageKey<String>('category_films_list');
 
   @override
   Widget build(BuildContext context) {
@@ -18,18 +21,61 @@ class SearchCategoryScreen extends GetView<SearchCategoryController>{
           color: AppColors.primaryTextGrey
         ),
         centerTitle: true,
-        title: Text(switchNameCollection(nameCollection), style: CustomTextStyles.m3TitleLarge()),
+        title: Text(switchNameCollection(controller.collectionName), style: CustomTextStyles.m3TitleLarge()),
       ),
       backgroundColor: AppColors.primaryThemeBlack,
-      body: Center(
-        child: Text("Категория", style: TextStyle(color: Colors.white))
-      )
+      body: SafeArea(
+        child: Obx(() => PageStorage(
+          bucket: _bucket, 
+          child: Padding(
+              padding: EdgeInsets.only(left: 20.w, right: 20.w),
+              child: Column(
+                children: [
+                  Flexible(child: categoryFilms()),
+                ],
+              )
+          ),
+          )
+        ),
+      ),
     );
   }
 
-  String switchNameCollection(String nameCollection){
+  Widget categoryFilms() {
+  return ListView.separated(
+    key: _listViewKey,
+    controller: controller.scrollController,
+    itemCount: controller.collectionFilms.value.items.isEmpty && controller.isLoading.value
+        ? 10
+        : controller.collectionFilms.value.items.length + (controller.isLoading.value ? 1 : 0),
+    separatorBuilder: (context, index) => SizedBox(height: 12.h),
+    itemBuilder: (context, index) {
+      
+      if (controller.collectionFilms.value.items.isEmpty && controller.isLoading.value) {
+        return CategoryMovieCard(film: null);
+      }
+
+      if (index == controller.collectionFilms.value.items.length) {
+        if (controller.isLoading.value) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        return Center(child: Text("Все фильмы загружены", style: CustomTextStyles.m3TitleLarge()));
+      }
+
+      return CategoryMovieCard(
+        film: controller.collectionFilms.value.items[index],
+      );
+    },
+  );
+}
+  
+
+  String switchNameCollection(String collectionName){
     String titleCollection;
-    switch(nameCollection){
+    switch(collectionName){
       case("TOP_POPULAR_MOVIES"): titleCollection = "Популярные фильмы"; return titleCollection;
       case("POPULAR_SERIES"): titleCollection = "Популярные сериалы"; return titleCollection;
       case("TOP_250_MOVIES"): titleCollection = "Топ 250: фильмы"; return titleCollection;

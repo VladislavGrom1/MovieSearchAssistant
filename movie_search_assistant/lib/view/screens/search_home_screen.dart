@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/controllers/search_home_screen_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
-import 'package:movie_search_assistant/view/screens/themes/colors.dart';
-import 'package:movie_search_assistant/view/screens/themes/custom_text_styles.dart';
-import 'package:movie_search_assistant/view/screens/widgets/custom_search_bar.dart';
-import 'package:movie_search_assistant/view/screens/widgets/movie_preview_card.dart';
+import 'package:movie_search_assistant/view/themes/colors.dart';
+import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/view/widgets/custom_search_bar.dart';
+import 'package:movie_search_assistant/view/widgets/movie_preview_card.dart';
 
 class SearchHomeScreen extends GetView<SearchHomeScreenController> {
   const SearchHomeScreen({super.key});
@@ -27,11 +27,20 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
                           controller.searchTextEditingController),
                   SizedBox(height: 13.h),
                   Expanded(
-                    child: ListView.separated(
-                        itemBuilder: (context, index) => categoryFilms(controller.collectionNames[index]), 
-                        separatorBuilder: (context, index) => SizedBox(height: 16.h), 
-                        itemCount: controller.collectionNames.length)
-                    ),
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        await controller.getAllCollectionsFilms();
+                      },
+                      child: Obx(() =>
+                        controller.isLoading.value
+                        ? Center(child: CircularProgressIndicator())
+                        : ListView.separated(
+                            itemBuilder: (context, index) => categoryFilms(controller.collectionNames[index]), 
+                            separatorBuilder: (context, index) => SizedBox(height: 16.h), 
+                            itemCount: controller.collectionNames.length)
+                            ),
+                    )
+                  ),
               ]
             )
           ),
@@ -51,6 +60,8 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
       default: title = "Категория не найдена";
     }
 
+
+    // TODO: Убрать проверку isLoading, т.к она покрывается прогресс индикатором выше
     return Column(
       children: [
       Row(
@@ -63,9 +74,17 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
               icon: Icon(Icons.arrow_forward_outlined, color: AppColors.primaryScheme))
         ],
       ),
-      Obx(() => controller.isLoading.value
-          ? CircularProgressIndicator()
-          : SizedBox(
+      Obx(() => 
+      controller.isLoading.value
+      ? SizedBox(
+              height: 200.h,
+              child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 10,
+                  separatorBuilder: (context, index) => SizedBox(width: 12.w),
+                  itemBuilder: (context, index) => MoviePreviewCard(
+                      film: null)))
+      : SizedBox(
               height: 200.h,
               child: ListView.separated(
                   scrollDirection: Axis.horizontal,

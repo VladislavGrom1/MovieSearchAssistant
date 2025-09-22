@@ -5,7 +5,7 @@ import 'package:movie_search_assistant/infrastructure/navigation/navigators/movi
 import 'package:movie_search_assistant/infrastructure/navigation/navigators/search_home_navigator.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/navigators/user_profile_navigator.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/navigators/will_watching_navigator.dart';
-import 'package:movie_search_assistant/view/screens/widgets/custom_navigation_bar.dart';
+import 'package:movie_search_assistant/view/widgets/custom_navigation_bar.dart';
 
 class NavigationScreen extends StatelessWidget{
    const NavigationScreen({super.key});
