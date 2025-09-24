@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/controllers/search_category_controller.dart';
+import 'package:movie_search_assistant/controllers/search_filter_controller.dart';
 import 'package:movie_search_assistant/controllers/search_keyword_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/screens/search_category_screen.dart';
+import 'package:movie_search_assistant/view/screens/switch_filters_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_home_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_keyword_screen.dart';
 
@@ -16,6 +18,15 @@ class SearchHomeNavigator extends StatelessWidget{
     return Navigator(
       key: Get.nestedKey(NavigatorIds.searchHome),
       onGenerateRoute: (settings) {
+        
+        if(settings.name == Routes.switchFiltersScreen){
+          Get.put(SwitchFiltersController());
+          return GetPageRoute(
+            settings: settings,
+            page: () => SwitchFiltersScreen()
+          );
+        }
+
         if(settings.name == Routes.seatchKeywordScreen){
           String keyword = settings.arguments.toString();
 
@@ -29,6 +40,7 @@ class SearchHomeNavigator extends StatelessWidget{
             page: () => SearchKeywordScreen(keyword: keyword)
           );
         }
+        
         if(settings.name == Routes.searchCategoryScreen) {
           String collectionName = settings.arguments.toString();
 

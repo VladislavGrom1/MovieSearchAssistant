@@ -20,17 +20,17 @@ class CustomSearchBar extends StatelessWidget{
   Widget build(BuildContext context){
     return SizedBox(
         height: 50.h,
-        child: Container(
+        child: Obx(() => Container(
           decoration: BoxDecoration(
-            color: AppColors.secondaryThemeGrey,
+            color: isFocus.value ? AppColors.primaryScheme : AppColors.secondaryThemeGrey,
             borderRadius: BorderRadius.circular(8.w),
           ),
-          child: Obx(() =>
+          child:
             Row(
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 10.w, right: 10.w), 
-                  child: Icon(Icons.search, color: AppColors.primaryTextGrey)
+                  child: Icon(Icons.search, color: isFocus.value ? AppColors.primaryThemeBlack : AppColors.primaryTextGrey)
                   ),
                 Expanded(
                   child: TextField(
@@ -56,8 +56,8 @@ class CustomSearchBar extends StatelessWidget{
                         Get.toNamed(Routes.seatchKeywordScreen, arguments: keyword, id: NavigatorIds.searchHome);
                       }
                     },
-                    cursorColor: AppColors.primaryTextGrey,
-                  style: TextStyle(color: AppColors.primaryTextGrey),
+                    cursorColor: isFocus.value ? AppColors.primaryThemeBlack : AppColors.primaryTextGrey,
+                  style: TextStyle(color: isFocus.value ? AppColors.primaryThemeBlack : AppColors.primaryTextGrey),
                   decoration: InputDecoration(
                     border: InputBorder.none
                   ),
@@ -65,20 +65,25 @@ class CustomSearchBar extends StatelessWidget{
                 ),
                   Padding(
                     padding: EdgeInsets.only(left:10.w, right: 10.w),
-                    child: isFocus.value
-                    ? IconButton(
-                      onPressed: () {
-                        clearTextFormField();
-                      },
-                      icon: Icon(Icons.clear, color: AppColors.primaryTextGrey)
-                    ) 
-                    : IconButton(
-                      onPressed: () {
-                        clearTextFormField();
-                      },
-                      icon: Icon(Icons.filter_alt_outlined, color: AppColors.primaryTextGrey)
+                    child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: 100),
+                      child: isFocus.value
+                        ? IconButton(
+                            key: ValueKey('clear'),
+                            onPressed: () {
+                              clearTextFormField();
+                            },
+                            icon: Icon(Icons.clear, color: AppColors.primaryThemeBlack)
+                          ) 
+                        : IconButton(
+                            key: ValueKey('filter'),
+                            onPressed: () {
+                              Get.toNamed(Routes.switchFiltersScreen, id: NavigatorIds.searchHome);
+                            },
+                            icon: Icon(Icons.filter_alt_outlined, color: AppColors.primaryTextGrey)
+                          )
                     )
-                  ),
+                  )
               ],
             ),
           ),
@@ -90,5 +95,6 @@ class CustomSearchBar extends StatelessWidget{
     textEditingController.clear();
     textEditingController.text = "";
     isFocus.value = false;
+    focusNode.unfocus();
   }
 }

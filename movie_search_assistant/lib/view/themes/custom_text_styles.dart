@@ -61,4 +61,14 @@ class CustomTextStyles {
       color: color ?? AppColors.primaryTextGrey
     );
   }
+
+  static TextStyle m3BodyLarge({Color? color}){
+    return TextStyle(
+      fontSize: 16,
+      height: 16/24,
+      letterSpacing: 0.5,
+      fontWeight: FontWeight.w400,
+      color: color ?? AppColors.primaryTextGrey
+    );
+  }
 }
