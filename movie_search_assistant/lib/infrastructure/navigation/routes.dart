@@ -6,7 +6,8 @@ class Routes {
   static const searchHomeScreen = '/searchHomeScreen';
   static const searchCategoryScreen = '/searchHomeScreen/searchCategoryScreen';
   static const seatchKeywordScreen = '/searchHomeScreen/searchKeywordScreen';
-  static const switchFiltersScreen = '/seatchHomeScreen/switchFiltersScreen';
+  static const switchFiltersScreen = '/searchHomeScreen/switchFiltersScreen';
+  static const filterScreen = '/searchHomeScreen/switchFiltersScreen/filterScreen';
   
   // WillWatching Tab
   static const willWatchingScreen = '/willWatchingScreen';

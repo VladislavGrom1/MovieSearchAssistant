@@ -78,7 +78,7 @@ class CustomSearchBar extends StatelessWidget{
                         : IconButton(
                             key: ValueKey('filter'),
                             onPressed: () {
-                              Get.toNamed(Routes.switchFiltersScreen, id: NavigatorIds.searchHome);
+                              Get.offAllNamed(Routes.switchFiltersScreen, id: NavigatorIds.searchHome);
                             },
                             icon: Icon(Icons.filter_alt_outlined, color: AppColors.primaryTextGrey)
                           )
