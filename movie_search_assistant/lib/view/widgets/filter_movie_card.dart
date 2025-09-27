@@ -7,8 +7,8 @@ import 'package:movie_search_assistant/models/film_card.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 
-class KeywordMovieCard extends StatelessWidget{
-  KeywordMovieCard({super.key, required this.film});
+class FilterMovieCard extends StatelessWidget{
+  FilterMovieCard({super.key, required this.film});
 
   FilmSearchByFiltersResponseItems? film;
 
@@ -87,7 +87,7 @@ class KeywordMovieCard extends StatelessWidget{
                 film == null
                 ? Container(color: AppColors.ratingGrey)
                 : Text(
-                  film!.countries == null || film!.countries!.isEmpty ? "-" : getCountriesValue(film!.countries!),
+                  film!.countries == null || film!.countries!.isEmpty ? "-${film!.year}" : "${getCountriesValue(film!.countries!)}, ${film!.year}",
                   style: CustomTextStyles.m3BodySmall(),
                 ),
                 SizedBox(height: 10.h),

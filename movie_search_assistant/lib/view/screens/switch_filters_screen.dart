@@ -48,7 +48,9 @@ class SwitchFiltersScreen extends GetView<SwitchFiltersController>{
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(controller.filterLabels[index], style: CustomTextStyles.m3BodyLarge()),
-                            Obx(() => Text(controller.switchFilterData(index), style: CustomTextStyles.m3BodyLarge()))
+                            Obx(() => Text(
+                              controller.switchFilterData(index), 
+                              style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryScheme)))
                           ],
                         ),
                       ),
@@ -70,7 +72,15 @@ class SwitchFiltersScreen extends GetView<SwitchFiltersController>{
                     backgroundColor: WidgetStatePropertyAll(AppColors.primaryScheme)
                   ),
                   onPressed: () {
-                    // TODO: Переход на окно searchFiltersScreen
+                    Get.toNamed(
+                      Routes.searchFiltersScreen, 
+                      arguments: {
+                        "id": "SwitchFilterScreen",
+                        "countries": controller.countryValueToBuiltList(),
+                        "genres": controller.genreValueToBuiltList(),
+                        "years": controller.getYearsValue()
+                        }, 
+                      id: NavigatorIds.searchHome);
                 }, 
                 child: Text("Показать", style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryTextWhite)),
                 ),

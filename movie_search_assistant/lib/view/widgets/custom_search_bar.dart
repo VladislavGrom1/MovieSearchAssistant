@@ -7,8 +7,6 @@ import 'package:movie_search_assistant/view/themes/colors.dart';
 
 import '../../infrastructure/navigation/routes.dart';
 
-// TODO: Разобраться с очисткой TextFormField (неправильно перерисовывается виджет при unfocus)
-
 class CustomSearchBar extends StatelessWidget{
   CustomSearchBar({super.key, required this.textEditingController});
 
@@ -53,7 +51,12 @@ class CustomSearchBar extends StatelessWidget{
                         return;
                       } else{
                         clearTextFormField();
-                        Get.toNamed(Routes.seatchKeywordScreen, arguments: keyword, id: NavigatorIds.searchHome);
+                        Get.toNamed(Routes.searchFiltersScreen, 
+                        arguments: {
+                          "id": "CustomSearchBar",
+                          "keyword": keyword
+                        }, 
+                        id: NavigatorIds.searchHome);
                       }
                     },
                     cursorColor: isFocus.value ? AppColors.primaryThemeBlack : AppColors.primaryTextGrey,

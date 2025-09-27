@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generated/generated.dart';
 import 'package:get/get.dart';
-import 'package:movie_search_assistant/controllers/search_keyword_controller.dart';
+import 'package:movie_search_assistant/controllers/search_filters_controller.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
-import 'package:movie_search_assistant/view/widgets/keyword_movie_card.dart';
+import 'package:movie_search_assistant/view/widgets/filter_movie_card.dart';
 
-class SearchKeywordScreen extends GetView<SearchKeywordController>{
-  SearchKeywordScreen({super.key, required this.keyword});
-
-  final String keyword;
+class SearchFiltersScreen extends GetView<SearchFiltersController>{
+  SearchFiltersScreen({super.key});
 
   final PageStorageBucket _bucket = PageStorageBucket();
   final PageStorageKey _listViewKey = const PageStorageKey<String>('keyword_films_list');
@@ -21,7 +19,7 @@ class SearchKeywordScreen extends GetView<SearchKeywordController>{
   Widget build(BuildContext context) {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.getKeywordFilms(keyword);
+      controller.getFilterFilms();
     });
 
     return Scaffold(
@@ -31,7 +29,7 @@ class SearchKeywordScreen extends GetView<SearchKeywordController>{
           color: AppColors.primaryTextGrey
         ),
         centerTitle: true,
-        title: Text("Поиск: ${keyword}", style: CustomTextStyles.m3TitleLarge()),
+        title: Text(controller.keyword == null ? "Результаты" : "Поиск: ${controller.keyword}", style: CustomTextStyles.m3TitleLarge()),
       ),
       backgroundColor: AppColors.primaryThemeBlack,
       body: SafeArea(
@@ -62,7 +60,7 @@ class SearchKeywordScreen extends GetView<SearchKeywordController>{
     itemBuilder: (context, index) {
       
       if (controller.filteredKeywordFilms.value.items.isEmpty && controller.isLoading.value) {
-        return KeywordMovieCard(film: null);
+        return FilterMovieCard(film: null);
       }
 
       if (index == controller.filteredKeywordFilms.value.items.length) {
@@ -88,8 +86,7 @@ class SearchKeywordScreen extends GetView<SearchKeywordController>{
         );
       }
       }
-
-      return KeywordMovieCard(
+      return FilterMovieCard(
         film: controller.filteredKeywordFilms.value.items[index],
       );
     },

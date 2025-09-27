@@ -6,10 +6,14 @@ import 'package:generated/generated.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 
-class SearchKeywordController extends GetxController{
-  SearchKeywordController({required this.keyword});
+class SearchFiltersController extends GetxController{
+  SearchFiltersController({this.keyword, this.countries, this.genres, this.yearFrom, this.yearTo});
 
-  String keyword;
+  String? keyword;
+  BuiltList<int>? countries;
+  BuiltList<int>? genres;
+  int? yearFrom;
+  int? yearTo;
 
   GlobalApiService apiService = Get.find<GlobalApiService>();
 
@@ -34,16 +38,15 @@ class SearchKeywordController extends GetxController{
     scrollController.addListener(() async {
       if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
         if(!allPagesLoaded){
-          await getKeywordFilms(keyword);
+          await getFilterFilms();
         }
       }
     });
-    await getKeywordFilms(keyword);
+    await getFilterFilms();
     super.onInit();
   }
 
-  // TODO: Реализовать, чтобы при одном и том же слове в поиске не происходило повторного запроса к серверу
-  Future<void> getKeywordFilms(String keyword) async{
+  Future<void> getFilterFilms() async{
 
     if (isFetchingNextPage) {
       return;
@@ -58,7 +61,15 @@ class SearchKeywordController extends GetxController{
     isLoading.value = true;
 
     try{
-      FilmSearchByFiltersResponse responseData = await apiService.getFiltersFilms(keyword, currentPage.value);
+
+      FilmSearchByFiltersResponse responseData = await apiService.getFilterFilms(
+        keyword, 
+        countries,
+        genres,
+        yearFrom,
+        yearTo,
+        currentPage.value
+      );
 
       final updated = filteredKeywordFilms.value.rebuild((b) {
           if (currentPage.value == 1) {

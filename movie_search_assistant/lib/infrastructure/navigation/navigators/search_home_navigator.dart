@@ -1,16 +1,18 @@
+import 'dart:developer';
+import 'package:built_collection/built_collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/controllers/filter_controller.dart';
 import 'package:movie_search_assistant/controllers/search_category_controller.dart';
 import 'package:movie_search_assistant/controllers/switch_filters_controller.dart';
-import 'package:movie_search_assistant/controllers/search_keyword_controller.dart';
+import 'package:movie_search_assistant/controllers/search_filters_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/screens/filter_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_category_screen.dart';
 import 'package:movie_search_assistant/view/screens/switch_filters_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_home_screen.dart';
-import 'package:movie_search_assistant/view/screens/search_keyword_screen.dart';
+import 'package:movie_search_assistant/view/screens/search_filters_screen.dart';
 
 class SearchHomeNavigator extends StatelessWidget{
   SearchHomeNavigator({super.key});
@@ -43,17 +45,41 @@ class SearchHomeNavigator extends StatelessWidget{
           );
         }
 
-        if(settings.name == Routes.seatchKeywordScreen){
-          String keyword = settings.arguments.toString();
+        if(settings.name == Routes.searchFiltersScreen){
 
-          if (Get.isRegistered<SearchKeywordController>()) {
-            Get.delete<SearchKeywordController>();
+          Map<dynamic, dynamic> arguments = settings.arguments as Map;
+          
+          String? keyword;
+          BuiltList<int>? countries;
+          BuiltList<int>? genres;
+          int? yearsFrom;
+          int? yearsTo;
+          
+          if(arguments["id"] == "CustomSearchBar"){
+            keyword = arguments["keyword"];
           }
 
-          Get.put(SearchKeywordController(keyword: keyword));
+          if(arguments["id"] == "SwitchFilterScreen"){
+            countries = arguments["countries"];
+            genres = arguments["genres"];
+            yearsFrom = arguments["years"][0];
+            yearsTo = arguments["years"][1];
+          }
+          
+          if (Get.isRegistered<SearchFiltersController>()) {
+            Get.delete<SearchFiltersController>();
+          }
+
+          Get.put(SearchFiltersController(
+            keyword: keyword,
+            countries: countries,
+            genres: genres,
+            yearFrom: yearsFrom,
+            yearTo: yearsTo));
+            
           return GetPageRoute(
             settings: settings,
-            page: () => SearchKeywordScreen(keyword: keyword)
+            page: () => SearchFiltersScreen()
           );
         }
         

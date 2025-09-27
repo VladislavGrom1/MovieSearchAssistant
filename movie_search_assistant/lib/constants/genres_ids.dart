@@ -1,6 +1,6 @@
 class GenresIds {
   static Map<String, int?> genresMap = {
-    "Все жанры": 0, 
+    "Все жанры": null, 
     "Аниме": 24,
     "Триллер": 1,
     "Драма": 2,
