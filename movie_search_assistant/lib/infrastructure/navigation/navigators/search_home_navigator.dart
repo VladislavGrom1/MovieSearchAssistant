@@ -3,11 +3,13 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
+import 'package:movie_search_assistant/controllers/film_controller.dart';
 import 'package:movie_search_assistant/controllers/filter_controller.dart';
 import 'package:movie_search_assistant/controllers/search_category_controller.dart';
 import 'package:movie_search_assistant/controllers/switch_filters_controller.dart';
 import 'package:movie_search_assistant/controllers/search_filters_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
+import 'package:movie_search_assistant/view/screens/film_screen.dart';
 import 'package:movie_search_assistant/view/screens/filter_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_category_screen.dart';
 import 'package:movie_search_assistant/view/screens/switch_filters_screen.dart';
@@ -22,6 +24,19 @@ class SearchHomeNavigator extends StatelessWidget{
     return Navigator(
       key: Get.nestedKey(NavigatorIds.searchHome),
       onGenerateRoute: (settings) {
+
+        if(settings.name == Routes.filmScreen){
+          
+          if (Get.isRegistered<FilmController>()) {
+            Get.delete<FilmController>();
+          }
+
+          Get.put(FilmController());
+          return GetPageRoute(
+            settings: settings,
+            page: () => FilmScreen()
+          );
+        }
 
         if(settings.name == Routes.filterScreen){
           int filterName = settings.arguments as int;

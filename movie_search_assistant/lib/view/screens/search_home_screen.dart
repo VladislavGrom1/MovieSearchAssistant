@@ -90,8 +90,13 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
                   scrollDirection: Axis.horizontal,
                   itemCount: 10,
                   separatorBuilder: (context, index) => SizedBox(width: 12.w),
-                  itemBuilder: (context, index) => MoviePreviewCard(
-                      film: controller.collectionsFilms[nameCategory]!.items[index])))),
+                  itemBuilder: (context, index) => InkWell(
+                    onTap: () {
+                      Get.toNamed(Routes.filmScreen, id: NavigatorIds.searchHome);
+                    },
+                    child: MoviePreviewCard(
+                        film: controller.collectionsFilms[nameCategory]!.items[index]),
+                  )))),
     ]);
   }
 }
