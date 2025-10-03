@@ -37,6 +37,7 @@ class FilterMovieCard extends StatelessWidget{
                           child: CachedNetworkImage(
                             imageUrl: film!.posterUrl.toString(),
                             fit: BoxFit.cover,
+                            filterQuality: FilterQuality.medium,
                           ),
                         ),
                       ),

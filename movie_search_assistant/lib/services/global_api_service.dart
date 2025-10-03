@@ -67,10 +67,25 @@ class GlobalApiService extends GetxController{
     }
   }
 
-  Future<Film> getFilmId(int idFilm) async{
+  Future<Film> getIdFilm(int idFilm) async{
     try{
       Response<Film> responseData = await filmsApi.apiV22FilmsIdGet(
         id: idFilm,
+        headers: {"X-API-KEY": "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"}
+      );
+      return responseData.data!;
+    } on DioException catch(e){
+      log(e.message.toString());
+      rethrow;
+    }
+  }
+
+  Future<ImageResponse> getImagesIdFilm(int idFilm) async{
+    try{
+      Response<ImageResponse> responseData = await filmsApi.apiV22FilmsIdImagesGet(
+        id: idFilm,
+        type: "STILL",
+        page: 1,
         headers: {"X-API-KEY": "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"}
       );
       return responseData.data!;

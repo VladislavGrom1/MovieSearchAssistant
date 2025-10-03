@@ -39,7 +39,7 @@ class CustomNavigationBar extends StatelessWidget {
                 Icons.video_library,
                 color: Colors.white,
               ),
-              label: "Библиотека",
+              label: "Коллекция",
             ),
             NavigationDestination(
               icon: Icon(Icons.person_2_outlined),

@@ -23,15 +23,6 @@ class CustomTextStyles {
     );
   }
 
-  static TextStyle m3BodySmall({Color? color}){
-    return TextStyle(
-      fontSize: 12,
-      height: 1.2,
-      letterSpacing: 0.4,
-      color: color ?? AppColors.primaryTextGrey
-    );
-  }
-
   static TextStyle m3LabelSmall({Color? color}){ 
       return TextStyle(
       fontSize: 11,
@@ -65,9 +56,38 @@ class CustomTextStyles {
   static TextStyle m3BodyLarge({Color? color}){
     return TextStyle(
       fontSize: 16,
-      height: 16/24,
+      height: 30/24,
       letterSpacing: 0.5,
       fontWeight: FontWeight.w400,
+      color: color ?? AppColors.primaryTextGrey
+    );
+  }
+
+  static TextStyle m3BodyMedium({Color? color}){
+    return TextStyle(
+      fontSize: 14,
+      height: 1,
+      letterSpacing: 0.25,
+      fontWeight: FontWeight.w400,
+      color: color ?? AppColors.primaryTextGrey
+    );
+  }
+
+  static TextStyle m3BodySmall({Color? color}){
+    return TextStyle(
+      fontSize: 12,
+      height: 1.2,
+      letterSpacing: 0.4,
+      color: color ?? AppColors.primaryTextGrey
+    );
+  }
+
+  static TextStyle m3HeadlineMedium({Color? color}){
+    return TextStyle(
+      fontSize: 28,
+      height: 28/36,
+      letterSpacing: 0,
+      fontWeight: FontWeight.w700,
       color: color ?? AppColors.primaryTextGrey
     );
   }

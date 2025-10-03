@@ -30,6 +30,7 @@ class MoviePreviewCard extends StatelessWidget {
                 : SizedBox.expand(
                   child: CachedNetworkImage(
                     imageUrl: film!.posterUrl.toString(),
+                    filterQuality: FilterQuality.medium,
                     fit: BoxFit.contain,
                   ),
                 ),

@@ -60,8 +60,6 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
       default: title = "Категория не найдена";
     }
 
-
-    // TODO: Убрать проверку isLoading, т.к она покрывается прогресс индикатором выше
     return Column(
       children: [
       Row(
@@ -74,17 +72,7 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
               icon: Icon(Icons.arrow_forward_outlined, color: AppColors.primaryScheme))
         ],
       ),
-      Obx(() => 
-      controller.isLoading.value
-      ? SizedBox(
-              height: 200.h,
-              child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 10,
-                  separatorBuilder: (context, index) => SizedBox(width: 12.w),
-                  itemBuilder: (context, index) => MoviePreviewCard(
-                      film: null)))
-      : SizedBox(
+      SizedBox(
               height: 200.h,
               child: ListView.separated(
                   scrollDirection: Axis.horizontal,
@@ -92,11 +80,11 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
                   separatorBuilder: (context, index) => SizedBox(width: 12.w),
                   itemBuilder: (context, index) => InkWell(
                     onTap: () {
-                      Get.toNamed(Routes.filmScreen, id: NavigatorIds.searchHome);
+                      Get.toNamed(Routes.filmScreen, arguments: controller.collectionsFilms[nameCategory]!.items[index].kinopoiskId, id: NavigatorIds.searchHome);
                     },
                     child: MoviePreviewCard(
                         film: controller.collectionsFilms[nameCategory]!.items[index]),
-                  )))),
+                  ))),
     ]);
   }
 }

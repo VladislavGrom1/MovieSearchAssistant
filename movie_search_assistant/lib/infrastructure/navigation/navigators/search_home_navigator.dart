@@ -26,12 +26,14 @@ class SearchHomeNavigator extends StatelessWidget{
       onGenerateRoute: (settings) {
 
         if(settings.name == Routes.filmScreen){
+
+          int idFilm = settings.arguments as int;
           
           if (Get.isRegistered<FilmController>()) {
             Get.delete<FilmController>();
           }
 
-          Get.put(FilmController());
+          Get.put(FilmController(idFilm: idFilm));
           return GetPageRoute(
             settings: settings,
             page: () => FilmScreen()
