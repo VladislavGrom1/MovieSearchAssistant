@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/controllers/search_category_controller.dart';
+import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 import 'package:movie_search_assistant/view/widgets/category_movie_card.dart';
+import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
 
 class SearchCategoryScreen extends GetView<SearchCategoryController>{
   SearchCategoryScreen({super.key});
@@ -25,7 +28,12 @@ class SearchCategoryScreen extends GetView<SearchCategoryController>{
       ),
       backgroundColor: AppColors.primaryThemeBlack,
       body: SafeArea(
-        child: Obx(() => PageStorage(
+        child: Obx(() {
+          if(controller.isErrorConnection.value){
+            return CustomErrorWidget(statusCode: controller.statusCode.value);
+          }
+
+          return PageStorage(
           bucket: _bucket, 
           child: Padding(
               padding: EdgeInsets.only(left: 20.w, right: 20.w),
@@ -35,7 +43,9 @@ class SearchCategoryScreen extends GetView<SearchCategoryController>{
                 ],
               )
           ),
-          )
+          );
+
+        } 
         ),
       ),
     );
@@ -65,8 +75,13 @@ class SearchCategoryScreen extends GetView<SearchCategoryController>{
         return Center(child: Text("Все фильмы загружены", style: CustomTextStyles.m3TitleLarge()));
       }
 
-      return CategoryMovieCard(
-        film: controller.collectionFilms.value.items[index],
+      return InkWell(
+        onTap: () {
+          Get.toNamed(Routes.filmScreen, arguments: controller.collectionFilms.value.items[index].kinopoiskId, id: NavigatorIds.searchHome);
+        },
+        child: CategoryMovieCard(
+          film: controller.collectionFilms.value.items[index],
+        ),
       );
     },
   );

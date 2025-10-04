@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:generated/generated.dart';
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/infrastructure/exceptions/api_exception.dart';
 
 import '../services/global_api_service.dart';
 
@@ -20,7 +21,11 @@ class SearchCategoryController extends GetxController{
   var totalPages = (null as int?).obs;
   bool isFetchingNextPage = false;
   bool allPagesLoaded = false;
-  var isLoading = false.obs; 
+
+  var isLoading = false.obs;
+
+  var isErrorConnection = false.obs;
+  var statusCode = 0.obs; 
 
   var collectionFilms = Rx<FilmCollectionResponse>(
   FilmCollectionResponse((b) => b
@@ -75,10 +80,17 @@ class SearchCategoryController extends GetxController{
         collectionFilms.value = updated;
         currentPage.value ++;
         totalPages.value = responseData.totalPages;
-
+    } on ApiException catch(e){
+      if(e.statusCode == 401){
+        isErrorConnection.value = true;
+        statusCode.value = 401;
+      }
+      if(e.statusCode == 402){
+        isErrorConnection.value = true;
+        statusCode.value = 402;
+      }
     } catch(e){
       log(e.toString());
-      rethrow;
     } finally{
       isFetchingNextPage = false;
       isLoading.value = false;

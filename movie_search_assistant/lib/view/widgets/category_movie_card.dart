@@ -36,6 +36,12 @@ class CategoryMovieCard extends StatelessWidget{
                         : SizedBox.expand(
                           child: CachedNetworkImage(
                             imageUrl: film!.posterUrl.toString(),
+                            errorWidget: (context, error, stackTrace) {
+                            return Container(
+                                color: AppColors.secondaryThemeGrey,
+                                child: Icon(Icons.error, color: AppColors.primaryTextGrey),
+                              );
+                            },
                             fit: BoxFit.cover,
                           ),
                         ),

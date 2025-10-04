@@ -9,6 +9,7 @@ import 'package:movie_search_assistant/controllers/search_filters_controller.dar
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
 import 'package:movie_search_assistant/view/widgets/filter_movie_card.dart';
 
 class SearchFiltersScreen extends GetView<SearchFiltersController> {
@@ -20,6 +21,7 @@ class SearchFiltersScreen extends GetView<SearchFiltersController> {
 
   @override
   Widget build(BuildContext context) {
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.getFilterFilms();
     });
@@ -37,13 +39,20 @@ class SearchFiltersScreen extends GetView<SearchFiltersController> {
       ),
       backgroundColor: AppColors.primaryThemeBlack,
       body: SafeArea(
-          child: Obx(() => PageStorage(
+          child: Obx(() {
+            if(controller.isErrorConnection.value){
+              return CustomErrorWidget(statusCode: controller.statusCode.value);
+            }
+            return PageStorage(
               bucket: _bucket,
               child: Padding(
                   padding: EdgeInsets.only(left: 20.w, right: 20.w),
                   child: Column(
                     children: [Flexible(child: keywordFilms())],
-                  ))))),
+                  )));
+                }
+        ),
+      )
     );
   }
 
@@ -89,10 +98,7 @@ class SearchFiltersScreen extends GetView<SearchFiltersController> {
         }
         return InkWell(
           onTap: () {
-            Get.toNamed(Routes.filmScreen,
-                arguments: controller
-                    .filteredKeywordFilms.value.items[index].kinopoiskId,
-                id: NavigatorIds.searchHome);
+            Get.toNamed(Routes.filmScreen, arguments: controller.filteredKeywordFilms.value.items[index].kinopoiskId, id: NavigatorIds.searchHome);
           },
           child: FilterMovieCard(
             film: controller.filteredKeywordFilms.value.items[index],

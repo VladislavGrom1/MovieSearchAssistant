@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generated/generated.dart';
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/infrastructure/exceptions/api_exception.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 
 class SearchFiltersController extends GetxController{
@@ -23,7 +24,10 @@ class SearchFiltersController extends GetxController{
   var totalPages = (null as int?).obs;
   bool isFetchingNextPage = false;
   bool allPagesLoaded = false;
+
   var isLoading = false.obs;
+  var isErrorConnection = false.obs;
+  var statusCode = 0.obs;
 
   var filteredKeywordFilms = Rx<FilmSearchByFiltersResponse>(
     FilmSearchByFiltersResponse((b) => b
@@ -47,6 +51,8 @@ class SearchFiltersController extends GetxController{
   }
 
   Future<void> getFilterFilms() async{
+
+    isErrorConnection.value = false;
 
     if (isFetchingNextPage) {
       return;
@@ -85,9 +91,17 @@ class SearchFiltersController extends GetxController{
         currentPage.value ++;
         totalPages.value = responseData.totalPages;
 
+    } on ApiException catch(e){
+      if(e.statusCode == 401){
+        isErrorConnection.value = true;
+        statusCode.value = 401;
+      }
+      if(e.statusCode == 402){
+        isErrorConnection.value = true;
+        statusCode.value = 402;
+      }
     } catch(e){
       log(e.toString());
-      rethrow;
     } finally{
       isFetchingNextPage = false;
       isLoading.value = false;

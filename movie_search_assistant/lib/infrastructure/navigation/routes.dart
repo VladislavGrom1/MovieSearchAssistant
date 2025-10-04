@@ -1,5 +1,6 @@
 class Routes {
 
+  static const loginScreen = '/loginScreen';
   static const navigationScreen = '/navigationScreen';
 
   // SearchHome Tab

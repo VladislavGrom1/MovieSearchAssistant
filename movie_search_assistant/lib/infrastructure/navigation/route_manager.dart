@@ -1,5 +1,6 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
+import 'package:movie_search_assistant/view/screens/login_screen.dart';
 import 'package:movie_search_assistant/view/screens/movie_library_screen.dart';
 import 'package:movie_search_assistant/view/screens/navigation_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_category_screen.dart';
@@ -13,6 +14,7 @@ class RouteManager {
       GetPage(
         name: Routes.navigationScreen,
         page: () => NavigationScreen()),
+      GetPage(name: Routes.loginScreen, page: () => LoginScreen())
       // SearchHome Tab
       // GetPage(
       //   name: Routes.searchHomeScreen,

@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
-import 'package:movie_search_assistant/controllers/search_home_screen_controller.dart';
+import 'package:movie_search_assistant/controllers/search_home_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
 import 'package:movie_search_assistant/view/widgets/custom_search_bar.dart';
 import 'package:movie_search_assistant/view/widgets/movie_preview_card.dart';
 
-class SearchHomeScreen extends GetView<SearchHomeScreenController> {
+class SearchHomeScreen extends GetView<SearchHomeController> {
   const SearchHomeScreen({super.key});
 
   @override
@@ -31,16 +32,24 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
                       onRefresh: () async {
                         await controller.getAllCollectionsFilms();
                       },
-                      child: Obx(() =>
-                        controller.isLoading.value
-                        ? Center(child: CircularProgressIndicator())
-                        : ListView.separated(
+                      child: Obx(() {
+                        if(controller.isErrorConnection.value){
+                          return CustomErrorWidget(statusCode: controller.statusCode.value);
+                        }
+
+                        if (controller.isLoading.value) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        else{
+                          return ListView.separated(
                             itemBuilder: (context, index) => categoryFilms(controller.collectionNames[index]), 
                             separatorBuilder: (context, index) => SizedBox(height: 16.h), 
-                            itemCount: controller.collectionNames.length)
-                            ),
+                            itemCount: controller.collectionNames.length);
+                        }
+                      }
                     )
                   ),
+                )
               ]
             )
           ),
@@ -83,7 +92,7 @@ class SearchHomeScreen extends GetView<SearchHomeScreenController> {
                       Get.toNamed(Routes.filmScreen, arguments: controller.collectionsFilms[nameCategory]!.items[index].kinopoiskId, id: NavigatorIds.searchHome);
                     },
                     child: MoviePreviewCard(
-                        film: controller.collectionsFilms[nameCategory]!.items[index]),
+                        film: controller.collectionsFilms[nameCategory]?.items[index]),
                   ))),
     ]);
   }

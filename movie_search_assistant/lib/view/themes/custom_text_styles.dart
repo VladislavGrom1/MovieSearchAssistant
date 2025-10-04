@@ -13,6 +13,16 @@ class CustomTextStyles {
     );
   }
 
+  static TextStyle m3TitleMedium({Color? color}){
+    return TextStyle(
+      fontSize: 16,
+      height: 1.2,
+      letterSpacing: 0.15,
+      fontWeight: FontWeight.w400,
+      color: color ?? AppColors.primaryTextGrey
+    );
+  }
+
   static TextStyle m3TitleLarge2({Color? color}){
     return TextStyle(
       fontSize: 18,

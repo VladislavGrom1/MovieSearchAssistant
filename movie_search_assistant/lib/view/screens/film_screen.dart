@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:built_collection/built_collection.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -6,18 +7,37 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generated/generated.dart';
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/controllers/film_controller.dart';
+import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
 
 class FilmScreen extends GetView<FilmController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(
-        () => controller.isLoading.value
-            ? Center(child: CircularProgressIndicator())
-            : CustomScrollView(
+      body: Obx(() {
+
+          if(controller.isErrorConnection.value){
+            return Column(
+              children: [
+                AppBar(
+                  backgroundColor: AppColors.primaryThemeBlack,
+                  leading: IconButton(onPressed: () {
+                    Get.toNamed(Routes.searchHomeScreen, id: NavigatorIds.searchHome);
+                  }, icon: Icon(Icons.arrow_back, color: AppColors.primaryTextWhite)),
+                ),
+                Expanded(child: CustomErrorWidget(statusCode: controller.statusCode.value)),
+              ],
+            );
+          }
+
+          if(controller.isLoading.value){
+            return Center(child: CircularProgressIndicator());
+          } else{
+            return CustomScrollView(
                 slivers: [
                   SliverAppBar(
                       backgroundColor: AppColors.primaryThemeBlack,
@@ -37,9 +57,10 @@ class FilmScreen extends GetView<FilmController> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(controller.film.value?.nameRu == null 
-                                ? controller.film.value!.nameOriginal.toString() 
-                                : controller.film.value!.nameRu.toString(),
+                              Text(
+                                  controller.film.value?.nameRu == null
+                                      ? controller.film.value?.nameOriginal == null ? "Название отсутствует" : controller.film.value!.nameOriginal.toString()
+                                      : controller.film.value!.nameRu.toString(),
                                   style: CustomTextStyles.m3HeadlineMedium()
                                       .copyWith(height: 1),
                                   textAlign: TextAlign.center),
@@ -85,8 +106,10 @@ class FilmScreen extends GetView<FilmController> {
                     ],
                   ),
                 ],
-              ),
-      ),
+              );
+          }
+
+      })
     );
   }
 
@@ -104,11 +127,16 @@ class FilmScreen extends GetView<FilmController> {
             FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
               background: CachedNetworkImage(
-                imageUrl: controller.film.value!.posterUrl,
+                imageUrl: controller.film.value?.posterUrl ?? "",
                 fit: BoxFit.cover,
                 placeholder: (context, url) =>
                     Container(color: AppColors.primaryTextGrey),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                errorWidget: (context, error, stackTrace) {
+                  return Container(
+                    color: AppColors.secondaryThemeGrey,
+                    child: Icon(Icons.error, color: AppColors.primaryTextGrey),
+                  );
+                },
               ),
             ),
             if (isCollapsed)
@@ -149,8 +177,8 @@ class FilmScreen extends GetView<FilmController> {
           padding: EdgeInsets.all(12.h),
           child: Column(
             children: [
-              if (controller.film.value!.nameOriginal != null) ...[
-                Text(controller.film.value!.nameOriginal ?? "-",
+              if (controller.film.value?.nameOriginal != null) ...[
+                Text(controller.film.value?.nameOriginal ?? "-",
                     style: CustomTextStyles.m3BodyMedium(
                             color: AppColors.primaryTextWhite)
                         .copyWith(
@@ -159,20 +187,20 @@ class FilmScreen extends GetView<FilmController> {
                     textAlign: TextAlign.center),
                 SizedBox(height: 10.h),
               ],
-              controller.film.value!.serial == true
+              controller.film.value?.serial == true
                   ? Text(
-                      "${controller.film.value!.startYear} - ${controller.film.value?.endYear ?? "настоящее время"}",
+                      "${controller.film.value?.startYear} - ${controller.film.value?.endYear ?? "настоящее время"}",
                       style: CustomTextStyles.m3BodyMedium(),
                       textAlign: TextAlign.center)
-                  : Text(controller.film.value!.year.toString(),
+                  : Text("${controller.film.value?.year}",
                       style: CustomTextStyles.m3BodyMedium(),
                       textAlign: TextAlign.center),
               SizedBox(height: 10.h),
-              Text(getGenresValue(controller.film.value!.genres),
+              Text(getGenresValue(controller.film.value?.genres),
                   style: CustomTextStyles.m3BodyMedium(),
                   textAlign: TextAlign.center),
               SizedBox(height: 10.h),
-              Text(getCountriesValue(controller.film.value!.countries),
+              Text(getCountriesValue(controller.film.value?.countries),
                   style: CustomTextStyles.m3BodyMedium(),
                   textAlign: TextAlign.center),
             ],
@@ -220,7 +248,7 @@ class FilmScreen extends GetView<FilmController> {
         child: Text(
             controller.film.value?.slogan == null
                 ? "Слоган отсутствует"
-                : "\"${controller.film.value!.slogan}\"",
+                : "\"${controller.film.value?.slogan}\"",
             style: CustomTextStyles.m3BodyMedium().copyWith(
               fontStyle: FontStyle.italic,
               height: 1,
@@ -324,6 +352,16 @@ class FilmScreen extends GetView<FilmController> {
                                         child: CachedNetworkImage(
                                           imageUrl: controller.imagesFilm.value!
                                               .items[index].imageUrl!,
+                                          errorWidget:
+                                              (context, error, stackTrace) {
+                                            return Container(
+                                              color:
+                                                  AppColors.secondaryThemeGrey,
+                                              child: Icon(Icons.error,
+                                                  color: AppColors
+                                                      .primaryTextGrey),
+                                            );
+                                          },
                                           filterQuality: FilterQuality.medium,
                                           fit: BoxFit.cover,
                                         ),
@@ -339,13 +377,23 @@ class FilmScreen extends GetView<FilmController> {
     );
   }
 
-  String getGenresValue(BuiltList<Genre> genresBuiltList) {
+  String getGenresValue(BuiltList<Genre>? genresBuiltList) {
+
+    if(genresBuiltList == null){
+      return "Данные отсутствуют";
+    }
+
     String genresValue =
         genresBuiltList.map((country) => country.genre).join(', ');
     return genresValue;
   }
 
-  String getCountriesValue(BuiltList<Country> countriesBuiltList) {
+  String getCountriesValue(BuiltList<Country>? countriesBuiltList) {
+
+    if(countriesBuiltList == null){
+      return "Данные отсутствуют";
+    }
+
     String countriesValue =
         countriesBuiltList.map((country) => country.country).join(', ');
     return countriesValue;
