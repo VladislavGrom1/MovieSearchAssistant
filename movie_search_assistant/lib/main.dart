@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(412, 927),
       child: GetMaterialApp(
-        initialRoute: Routes.navigationScreen,
+        initialRoute: Routes.rootScreen,
         getPages: RouteManager.getPages(),
         title: 'Movie Search Assistant',
         theme: ThemeData(

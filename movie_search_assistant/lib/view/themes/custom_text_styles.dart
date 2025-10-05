@@ -92,6 +92,16 @@ class CustomTextStyles {
     );
   }
 
+  static TextStyle m3HeadlineLarge({Color? color}){
+    return TextStyle(
+      fontSize: 32,
+      height: 32/40,
+      letterSpacing: 0,
+      fontWeight: FontWeight.w700,
+      color: color ?? AppColors.primaryTextGrey
+    );
+  }
+
   static TextStyle m3HeadlineMedium({Color? color}){
     return TextStyle(
       fontSize: 28,

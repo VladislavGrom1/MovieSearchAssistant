@@ -1,5 +1,6 @@
 class Routes {
 
+  static const rootScreen = '/rootScreen';
   static const loginScreen = '/loginScreen';
   static const navigationScreen = '/navigationScreen';
 
@@ -19,5 +20,6 @@ class Routes {
 
   // UserProfile Tab
   static const userProfileScreen = '/userProfileScreen';
+  static const changeApiKeyScreen = '/userProfileScreen/changeApiKeyScreen';
 
 }

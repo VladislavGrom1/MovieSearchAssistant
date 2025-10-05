@@ -6,6 +6,7 @@ import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/controllers/film_controller.dart';
 import 'package:movie_search_assistant/controllers/filter_controller.dart';
 import 'package:movie_search_assistant/controllers/search_category_controller.dart';
+import 'package:movie_search_assistant/controllers/search_home_controller.dart';
 import 'package:movie_search_assistant/controllers/switch_filters_controller.dart';
 import 'package:movie_search_assistant/controllers/search_filters_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
@@ -113,6 +114,7 @@ class SearchHomeNavigator extends StatelessWidget{
             page: () => SearchCategoryScreen(),
           );
         } else{
+          Get.put(SearchHomeController());
           return GetPageRoute(
             settings: settings, 
             page: () => SearchHomeScreen(),

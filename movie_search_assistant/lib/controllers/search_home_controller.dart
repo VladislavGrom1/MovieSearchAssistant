@@ -3,6 +3,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generated/generated.dart';
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/controllers/navigation_controller.dart';
 import 'package:movie_search_assistant/infrastructure/exceptions/api_exception.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 
@@ -23,10 +24,21 @@ class SearchHomeController extends GetxController{
   @override
   void onInit() async{
     await getAllCollectionsFilms();
+
+    ever(NavigationController.to.currentIndex, (index) {
+      if (index == 0) {
+        _onTabActivated();
+      }
+    });
+
     super.onInit();
   }
 
-  // TODO: Доработать обработку исключений
+  void _onTabActivated() async {
+    if (isErrorConnection.value == true) {
+      await getAllCollectionsFilms();
+    }
+  }
 
   Future<void> getCollectionFilms(String nameCollection) async {
     isLoading.value = true;
