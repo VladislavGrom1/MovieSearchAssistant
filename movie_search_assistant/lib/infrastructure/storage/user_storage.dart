@@ -1,27 +1,20 @@
 import 'dart:developer';
 
+import 'package:hive/hive.dart';
+import 'package:movie_search_assistant/constants/hive_storage_keys.dart';
 import 'package:movie_search_assistant/constants/storage_keys.dart';
 import 'package:movie_search_assistant/infrastructure/exceptions/storage_exception.dart';
-import 'package:movie_search_assistant/models/user_api_key.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:movie_search_assistant/infrastructure/storage/storage_manager.dart';
+import 'package:movie_search_assistant/models/user_api_key_info.dart';
 
 class UserStorage {
   
-  Future<SharedPreferences> getStorage() async{
-    try{
-      return await SharedPreferences.getInstance();
-    } catch(e){
-      log(e.toString());
-      throw StorageException(e.toString());
-    }
-  }
-
   Future<String?> getUserApiKey() async{
-    String? apiKey;
+    UserApiKeyInfo? userApiKeyInfo;
     try{
-      final userStorage = await getStorage();
-      apiKey = userStorage.getString(StorageKeys.USER_API_KEY);
-      return apiKey;
+      final storageBox = Hive.box<UserApiKeyInfo>(HiveStorageKeys.userApiKeyBox);
+      userApiKeyInfo = storageBox.get(HiveStorageKeys.userApiKey);
+      return userApiKeyInfo?.apikey;
     } catch(e){
       log(e.toString());
       throw StorageException(e.toString());
@@ -30,8 +23,8 @@ class UserStorage {
 
   Future<void> addUserApiKey(String apiKey) async {
     try{
-      final userStorage = await getStorage();
-      await userStorage.setString(StorageKeys.USER_API_KEY, apiKey);
+      final storageBox = Hive.box<UserApiKeyInfo>(HiveStorageKeys.userApiKeyBox);
+      await storageBox.put(HiveStorageKeys.userApiKey, UserApiKeyInfo(apiKey, null, null, null));
     } catch(e){
       log(e.toString());
       throw StorageException(e.toString());
@@ -40,8 +33,8 @@ class UserStorage {
 
   Future<void> removeUserApiKey() async{
     try{
-      final userStorage = await getStorage();
-      await userStorage.remove(StorageKeys.USER_API_KEY);
+      final storageBox = Hive.box<UserApiKeyInfo>(HiveStorageKeys.userApiKeyBox);
+      await storageBox.delete(HiveStorageKeys.userApiKey);
     } catch(e){
       log(e.toString());
       throw StorageException(e.toString());

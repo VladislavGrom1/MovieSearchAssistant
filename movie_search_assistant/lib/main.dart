@@ -3,11 +3,19 @@ import 'package:get/get.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/route_manager.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/services/di_init.dart';
+import 'package:movie_search_assistant/services/hive_init.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
+// Продумать логику, как будет происходить процесс переключения статуса фильма из "Буду смотреть" в "Коллекция"
+// По идее фильм не может существовать сразу в двух состояниях???
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await HiveInit.init();
   DiInit.init();
+  // Очищения хранилищая для теста
+  //await StorageManager.clearUserFilmsBox();
   runApp(const MyApp());
 }
 

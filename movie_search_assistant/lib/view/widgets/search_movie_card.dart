@@ -3,17 +3,59 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generated/generated.dart';
-import 'package:movie_search_assistant/models/film_card.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 
-class CategoryMovieCard extends StatelessWidget{
-  CategoryMovieCard({super.key, required this.film});
+class SearchMovieCard extends StatelessWidget{
+  const SearchMovieCard({
+    super.key,
+    this.nameRu,
+    this.nameOriginal,
+    this.posterUrl,
+    this.ratingKinopoisk,
+    this.countries,
+    this.genres,
+    this.year
+  });
 
-  FilmCollectionResponseItems? film;
+  final String? nameRu;
+  final String? nameOriginal;
+  final String? posterUrl;
+  final num? ratingKinopoisk;
+  final BuiltList<Country>? countries;
+  final BuiltList<Genre>? genres;
+  final num? year;
+
+
+  factory SearchMovieCard.fromFilters(FilmSearchByFiltersResponseItems? film){
+    if(film == null) return SearchMovieCard();
+    return SearchMovieCard(
+      nameRu: film.nameRu,
+      nameOriginal: film.nameOriginal,
+      posterUrl: film.posterUrl,
+      ratingKinopoisk: film.ratingKinopoisk,
+      countries: film.countries,
+      genres: film.genres,
+      year: film.year,
+    );
+  }
+
+  factory SearchMovieCard.fromCategory(FilmCollectionResponseItems? film){
+    if(film == null) return SearchMovieCard();
+    return SearchMovieCard(
+      nameRu: film.nameRu,
+      nameOriginal: film.nameOriginal,
+      posterUrl: film.posterUrl,
+      ratingKinopoisk: film.ratingKinopoisk,
+      countries: film.countries,
+      genres: film.genres,
+      year: film.year,
+    );
+  }
+
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Card(
       color: AppColors.primaryThemeBlack,
       child: Row(
@@ -31,11 +73,12 @@ class CategoryMovieCard extends StatelessWidget{
                   children: [
                     ClipRRect(
                         borderRadius: BorderRadius.circular(16.w),
-                        child: film == null
-                        ? Container(color: AppColors.ratingGrey)
-                        : SizedBox.expand(
-                          child: CachedNetworkImage(
-                            imageUrl: film!.posterUrl.toString(),
+                        child: SizedBox.expand(
+                          child: 
+                          posterUrl == null
+                          ? Container(color: AppColors.secondaryThemeGrey)
+                          : CachedNetworkImage(
+                            imageUrl: posterUrl.toString(),
                             errorWidget: (context, error, stackTrace) {
                             return Container(
                                 color: AppColors.secondaryThemeGrey,
@@ -43,28 +86,12 @@ class CategoryMovieCard extends StatelessWidget{
                               );
                             },
                             fit: BoxFit.cover,
+                            filterQuality: FilterQuality.medium,
                           ),
                         ),
                       ),
                     // TODO: Разработать логику отображения иконки "Рейтинг"
-                    film == null 
-                    ? Positioned(
-                      bottom: 8.h,
-                      right: 8.w,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.ratingGrey,
-                          borderRadius: BorderRadius.circular(5.0.h),
-                        ),
-                        width: 22.w,
-                        height: 20.h,
-                        child: Center(
-                          child: Text("",
-                              style: CustomTextStyles.m3LabelSmall(color: Colors.white)),
-                        ),
-                      ),
-                    )
-                    : ratingIcon(film!.ratingKinopoisk),
+                    ratingIcon(ratingKinopoisk),
                   ],
                 ),
               ),
@@ -75,32 +102,32 @@ class CategoryMovieCard extends StatelessWidget{
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(height: 5.h),
-                film == null
-                ? Container(color: AppColors.ratingGrey)
+                nameRu == null
+                ? Container(color: AppColors.secondaryThemeGrey)
                 : Text(
-                  film!.nameRu == null || film!.nameRu!.isEmpty ? film!.nameOriginal.toString() : film!.nameRu.toString(),
+                  nameRu!.isEmpty ? nameOriginal.toString() : nameRu.toString(), 
                   style: CustomTextStyles.m3TitleLarge2(),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2),
                 SizedBox(height: 10.h),
-                film == null
-                ? Container(color: AppColors.ratingGrey)
+                nameOriginal == null
+                ? Container(color: AppColors.secondaryThemeGrey)
                 : Text(
-                  film!.nameOriginal == null || film!.nameOriginal!.isEmpty ? "-" : film!.nameOriginal.toString(),
+                  nameOriginal!.isEmpty ? "-" : nameOriginal.toString(),
                   style: CustomTextStyles.m3BodySmall(),
                 ),
                 SizedBox(height: 10.h),
-                film == null
-                ? Container(color: AppColors.ratingGrey)
+                countries == null
+                ? Container(color: AppColors.secondaryThemeGrey)
                 : Text(
-                  film!.countries == null || film!.countries!.isEmpty ? "-" : getCountriesValue(film!.countries!),
+                  countries!.isEmpty ? "-$year" : "${getCountriesValue(countries!)}, $year",
                   style: CustomTextStyles.m3BodySmall(),
                 ),
                 SizedBox(height: 10.h),
-                film == null
-                ? Container(color: AppColors.ratingGrey)
+                genres == null
+                ? Container(color: AppColors.secondaryThemeGrey)
                 : Text(
-                  film!.genres == null || film!.genres!.isEmpty ? "Нет данных" : getGenresValue(film!.genres!),
+                  genres!.isEmpty ? "Нет данных" : getGenresValue(genres!),
                   style: CustomTextStyles.m3BodySmall(),
                 )
               ]
@@ -109,7 +136,6 @@ class CategoryMovieCard extends StatelessWidget{
         ],
       ),
     );
-
   }
 
   String getCountriesValue(BuiltList<Country> countriesBuiltList){

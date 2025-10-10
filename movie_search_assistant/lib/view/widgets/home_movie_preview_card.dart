@@ -5,8 +5,8 @@ import 'package:generated/generated.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 
-class MoviePreviewCard extends StatelessWidget {
-  MoviePreviewCard({super.key, required this.film});
+class HomeMoviePreviewCard extends StatelessWidget {
+  HomeMoviePreviewCard({super.key, required this.film});
 
   FilmCollectionResponseItems? film;
 
@@ -97,7 +97,7 @@ class MoviePreviewCard extends StatelessWidget {
       ],
     );
   }
-
+  
   Widget ratingIcon(num? ratingKinopoisk) {
     Color backgroundColor;
     String rating;

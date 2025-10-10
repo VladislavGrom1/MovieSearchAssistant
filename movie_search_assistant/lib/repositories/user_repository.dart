@@ -12,7 +12,7 @@ class UserRepository extends GetxController{
     try{
       return await _userStorage.getUserApiKey();
     } on StorageException catch(e){
-      log(e.toString());
+      log(e.message);
       rethrow;
     } catch(e) {
       log(e.toString());
@@ -24,7 +24,7 @@ class UserRepository extends GetxController{
     try{
       await _userStorage.addUserApiKey(apiKey);
     } on StorageException catch(e){
-      log(e.toString());
+      log(e.message);
       rethrow;
     } catch(e) {
       log(e.toString());
@@ -36,7 +36,7 @@ class UserRepository extends GetxController{
     try{
       await _userStorage.removeUserApiKey();
     } on StorageException catch(e){
-      log(e.toString());
+      log(e.message);
       rethrow;
     } catch(e) {
       log(e.toString());

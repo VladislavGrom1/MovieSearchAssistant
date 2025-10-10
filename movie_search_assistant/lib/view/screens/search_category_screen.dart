@@ -6,8 +6,8 @@ import 'package:movie_search_assistant/controllers/search_category_controller.da
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
-import 'package:movie_search_assistant/view/widgets/category_movie_card.dart';
 import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
+import 'package:movie_search_assistant/view/widgets/search_movie_card.dart';
 
 class SearchCategoryScreen extends GetView<SearchCategoryController>{
   SearchCategoryScreen({super.key});
@@ -62,7 +62,7 @@ class SearchCategoryScreen extends GetView<SearchCategoryController>{
     itemBuilder: (context, index) {
       
       if (controller.collectionFilms.value.items.isEmpty && controller.isLoading.value) {
-        return CategoryMovieCard(film: null);
+        return SearchMovieCard.fromCategory(null);
       }
 
       if (index == controller.collectionFilms.value.items.length) {
@@ -79,9 +79,7 @@ class SearchCategoryScreen extends GetView<SearchCategoryController>{
         onTap: () {
           Get.toNamed(Routes.filmScreen, arguments: controller.collectionFilms.value.items[index].kinopoiskId, id: NavigatorIds.searchHome);
         },
-        child: CategoryMovieCard(
-          film: controller.collectionFilms.value.items[index],
-        ),
+        child: SearchMovieCard.fromCategory(controller.collectionFilms.value.items[index])
       );
     },
   );

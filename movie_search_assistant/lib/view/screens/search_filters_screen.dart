@@ -10,7 +10,7 @@ import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
-import 'package:movie_search_assistant/view/widgets/filter_movie_card.dart';
+import 'package:movie_search_assistant/view/widgets/search_movie_card.dart';
 
 class SearchFiltersScreen extends GetView<SearchFiltersController> {
   SearchFiltersScreen({super.key});
@@ -69,7 +69,7 @@ class SearchFiltersScreen extends GetView<SearchFiltersController> {
       itemBuilder: (context, index) {
         if (controller.filteredKeywordFilms.value.items.isEmpty &&
             controller.isLoading.value) {
-          return FilterMovieCard(film: null);
+          return SearchMovieCard.fromFilters(null);
         }
 
         if (index == controller.filteredKeywordFilms.value.items.length) {
@@ -100,9 +100,7 @@ class SearchFiltersScreen extends GetView<SearchFiltersController> {
           onTap: () {
             Get.toNamed(Routes.filmScreen, arguments: controller.filteredKeywordFilms.value.items[index].kinopoiskId, id: NavigatorIds.searchHome);
           },
-          child: FilterMovieCard(
-            film: controller.filteredKeywordFilms.value.items[index],
-          ),
+          child: SearchMovieCard.fromFilters(controller.filteredKeywordFilms.value.items[index])
         );
       },
     );

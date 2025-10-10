@@ -8,7 +8,7 @@ import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
 import 'package:movie_search_assistant/view/widgets/custom_search_bar.dart';
-import 'package:movie_search_assistant/view/widgets/movie_preview_card.dart';
+import 'package:movie_search_assistant/view/widgets/home_movie_preview_card.dart';
 
 class SearchHomeScreen extends GetView<SearchHomeController> {
   const SearchHomeScreen({super.key});
@@ -91,7 +91,7 @@ class SearchHomeScreen extends GetView<SearchHomeController> {
                     onTap: () {
                       Get.toNamed(Routes.filmScreen, arguments: controller.collectionsFilms[nameCategory]!.items[index].kinopoiskId, id: NavigatorIds.searchHome);
                     },
-                    child: MoviePreviewCard(
+                    child: HomeMoviePreviewCard(
                         film: controller.collectionsFilms[nameCategory]?.items[index]),
                   ))),
     ]);

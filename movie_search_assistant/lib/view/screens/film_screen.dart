@@ -19,7 +19,6 @@ class FilmScreen extends GetView<FilmController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() {
-
           if(controller.isErrorConnection.value){
             return Column(
               children: [
@@ -71,15 +70,21 @@ class FilmScreen extends GetView<FilmController> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     customIconButton(
-                                        "Буду смотреть",
-                                        Icon(Icons.bookmark_add_outlined,
-                                            size: 30.w)),
-                                    customIconButton("Подробнее",
-                                        Icon(Icons.public, size: 30.w)),
+                                        label: "Буду смотреть",
+                                        icon: Icon(Icons.bookmark_add_outlined, size: 30.w),
+                                        function: () async {
+                                          try{
+                                            controller.saveFilmInWillWatchCollection();
+                                          } catch(e){
+                                            log(e.toString());
+                                          }
+                                        }),
                                     customIconButton(
-                                        "В коллекцию",
-                                        Icon(Icons.my_library_add_outlined,
-                                            size: 30.w)),
+                                        label:"Подробнее",
+                                        icon: Icon(Icons.public, size: 30.w)),
+                                    customIconButton(
+                                        label: "В коллекцию",
+                                        icon: Icon(Icons.my_library_add_outlined,size: 30.w)),
                                   ]),
                               SizedBox(height: 40.h),
                               filmDescription(),
@@ -108,7 +113,6 @@ class FilmScreen extends GetView<FilmController> {
                 ],
               );
           }
-
       })
     );
   }
@@ -175,45 +179,48 @@ class FilmScreen extends GetView<FilmController> {
       color: AppColors.secondaryThemeGrey,
       child: Padding(
           padding: EdgeInsets.all(12.h),
-          child: Column(
-            children: [
-              if (controller.film.value?.nameOriginal != null) ...[
-                Text(controller.film.value?.nameOriginal ?? "-",
-                    style: CustomTextStyles.m3BodyMedium(
-                            color: AppColors.primaryTextWhite)
-                        .copyWith(
-                      fontStyle: FontStyle.italic,
-                    ),
+          child: SizedBox(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (controller.film.value?.nameOriginal != null) ...[
+                  Text(controller.film.value?.nameOriginal ?? "-",
+                      style: CustomTextStyles.m3BodyMedium(
+                              color: AppColors.primaryTextWhite)
+                          .copyWith(
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center),
+                  SizedBox(height: 10.h),
+                ],
+                controller.film.value?.serial == true
+                    ? Text(
+                        "${controller.film.value?.startYear} - ${controller.film.value?.endYear ?? "настоящее время"}",
+                        style: CustomTextStyles.m3BodyMedium(),
+                        textAlign: TextAlign.center)
+                    : Text("${controller.film.value?.year}",
+                        style: CustomTextStyles.m3BodyMedium(),
+                        textAlign: TextAlign.center),
+                SizedBox(height: 10.h),
+                Text(getGenresValue(controller.film.value?.genres),
+                    style: CustomTextStyles.m3BodyMedium(),
                     textAlign: TextAlign.center),
                 SizedBox(height: 10.h),
+                Text(getCountriesValue(controller.film.value?.countries),
+                    style: CustomTextStyles.m3BodyMedium(),
+                    textAlign: TextAlign.center),
               ],
-              controller.film.value?.serial == true
-                  ? Text(
-                      "${controller.film.value?.startYear} - ${controller.film.value?.endYear ?? "настоящее время"}",
-                      style: CustomTextStyles.m3BodyMedium(),
-                      textAlign: TextAlign.center)
-                  : Text("${controller.film.value?.year}",
-                      style: CustomTextStyles.m3BodyMedium(),
-                      textAlign: TextAlign.center),
-              SizedBox(height: 10.h),
-              Text(getGenresValue(controller.film.value?.genres),
-                  style: CustomTextStyles.m3BodyMedium(),
-                  textAlign: TextAlign.center),
-              SizedBox(height: 10.h),
-              Text(getCountriesValue(controller.film.value?.countries),
-                  style: CustomTextStyles.m3BodyMedium(),
-                  textAlign: TextAlign.center),
-            ],
+            ),
           )),
     );
   }
 
-  Widget customIconButton(String label, Icon icon) {
+  Widget customIconButton({required String label, required Icon icon, VoidCallback? function}) {
     return ElevatedButton(
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(AppColors.primaryThemeBlack),
         ),
-        onPressed: () {},
+        onPressed: function,
         child: Column(
           children: [
             icon,
@@ -223,7 +230,8 @@ class FilmScreen extends GetView<FilmController> {
                     color: AppColors.primaryScheme),
                 textAlign: TextAlign.center)
           ],
-        ));
+        )
+      );
   }
 
   Widget filmDescription() {
