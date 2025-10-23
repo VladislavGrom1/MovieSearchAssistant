@@ -69,22 +69,44 @@ class FilmScreen extends GetView<FilmController> {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    customIconButton(
+                                    AnimatedSwitcher(
+                                      duration: Duration(milliseconds: 100),
+                                      child: controller.filmIsWillWatch.value
+                                      ? customIconButton(
+                                        label: "Не буду смотреть",
+                                        icon: Icon(Icons.delete_outline, size: 30.w, color: AppColors.ratingRed),
+                                        textColor: AppColors.ratingRed,
+                                        function: () async {
+                                          try{
+                                            // TODO: Функция удаления фильма из "Буду смотреть"
+                                            controller.removeFilmFromWillWatchCollection();
+                                          } catch(e){
+                                            log(e.toString());
+                                          }
+                                        })
+                                      : customIconButton(
                                         label: "Буду смотреть",
-                                        icon: Icon(Icons.bookmark_add_outlined, size: 30.w),
+                                        icon: Icon(Icons.bookmark_add_outlined, size: 30.w, color: AppColors.primaryScheme),
+                                        textColor: AppColors.primaryScheme,
                                         function: () async {
                                           try{
                                             controller.saveFilmInWillWatchCollection();
                                           } catch(e){
                                             log(e.toString());
                                           }
-                                        }),
+                                        }), 
+                                      ),
                                     customIconButton(
                                         label:"Подробнее",
-                                        icon: Icon(Icons.public, size: 30.w)),
+                                        icon: Icon(Icons.public, size: 30.w, color: AppColors.primaryScheme),
+                                        textColor: AppColors.primaryScheme,
+                                        ),
+                                    // TODO: Реализовать альтернативную кнопку для удаления
                                     customIconButton(
                                         label: "В коллекцию",
-                                        icon: Icon(Icons.my_library_add_outlined,size: 30.w)),
+                                        icon: Icon(Icons.my_library_add_outlined,size: 30.w),
+                                        textColor: AppColors.primaryScheme
+                                        ),
                                   ]),
                               SizedBox(height: 40.h),
                               filmDescription(),
@@ -215,7 +237,7 @@ class FilmScreen extends GetView<FilmController> {
     );
   }
 
-  Widget customIconButton({required String label, required Icon icon, VoidCallback? function}) {
+  Widget customIconButton({required String label, required Icon icon, required Color textColor, VoidCallback? function}) {
     return ElevatedButton(
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(AppColors.primaryThemeBlack),
@@ -226,9 +248,11 @@ class FilmScreen extends GetView<FilmController> {
             icon,
             SizedBox(height: 10.h),
             Text(label,
-                style: CustomTextStyles.m3LabelMedium(
-                    color: AppColors.primaryScheme),
-                textAlign: TextAlign.center)
+            maxLines: 2,
+                  style: CustomTextStyles.m3LabelMedium(
+                      color: textColor),
+                  textAlign: TextAlign.center
+            ),
           ],
         )
       );

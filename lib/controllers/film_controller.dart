@@ -17,6 +17,9 @@ class FilmController extends GetxController{
   
   var film = (null as Film?).obs;
   var imagesFilm = (null as ImageResponse?).obs;
+  var filmIsWillWatch = false.obs;
+  var filmIsFavourite = false.obs;
+  
   var isLoading = false.obs;
 
   var isErrorConnection = false.obs;
@@ -25,7 +28,23 @@ class FilmController extends GetxController{
   @override
   void onInit() async{
     await getIdFilm();
+    await getFilmCategoryStatuses();
     super.onInit();
+  }
+
+  Future<void> getFilmCategoryStatuses() async{
+    isLoading.value = true;
+    try{
+      FilmCard? filmFromStorage = await filmRepository.getFilmFromStorage(idFilm);
+      if(filmFromStorage != null){
+        filmIsWillWatch.value = filmFromStorage.isWillWatch!;
+        filmIsFavourite.value = filmFromStorage.isFavourite!;
+      }
+    } catch(e){
+      log(e.toString());
+    } finally{
+      isLoading.value = false;
+    }
   }
   
   Future<void> getIdFilm() async{
@@ -62,12 +81,48 @@ class FilmController extends GetxController{
   }
 
   // TODO: Если фильм уже добавлен в Коллекцию, то нужно сделать проверку по id, чтобы просто поменять флаг на isWillWatch
-  // Сделать проверку перед сохранением, есть ли фильм в локальном хранилище -> попробовать получить фильм, если получим, то проверить поля IsWillWatch и IsFavourite
-  
+  // TODO: Переделать UI под выбор одного состояния из 3-х (Не выбрано, Буду Смотреть, Добавить в коллекцию)
+
   Future<void> saveFilmInWillWatchCollection() async{
     try{
       FilmCard filmCard = filmToFilmCard(film.value, imagesFilm.value);
       await filmRepository.addFilmInStorage(filmCard);
+      filmIsWillWatch.value = true;
+      filmIsFavourite.value = false;
+    } catch(e){
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> removeFilmFromWillWatchCollection() async{
+    try{
+      await filmRepository.removeFilmFromStorage(idFilm);
+      filmIsWillWatch.value = false;
+      filmIsFavourite.value = true;
+    } catch(e){
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> saveFilmInFavouriteCollection() async{
+    try{
+      FilmCard filmCard = filmToFilmCard(film.value, imagesFilm.value);
+      await filmRepository.addFilmInStorage(filmCard);
+      filmIsWillWatch.value = true;
+      filmIsFavourite.value = false;
+    } catch(e){
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> removeFilmInFavouriteCollection() async{
+    try{
+      await filmRepository.removeFilmFromStorage(idFilm);
+      filmIsWillWatch.value = false;
+      filmIsFavourite.value = true;
     } catch(e){
       log(e.toString());
       rethrow;

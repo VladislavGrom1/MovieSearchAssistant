@@ -6,6 +6,7 @@ part 'film_card.g.dart';
 
 @HiveType(typeId: 1)
 class FilmCard {
+  // TODO: Добавить поля ЛичныйРейтинг + Комментарий
   @HiveField(0) final int? kinopoiskId;
   @HiveField(1) final String? nameRu;
   @HiveField(2) final String? nameOriginal;
