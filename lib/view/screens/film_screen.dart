@@ -13,130 +13,169 @@ import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FilmScreen extends GetView<FilmController> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Obx(() {
-          if(controller.isErrorConnection.value){
-            return Column(
-              children: [
-                AppBar(
-                  backgroundColor: AppColors.primaryThemeBlack,
-                  leading: IconButton(onPressed: () {
-                    Get.toNamed(Routes.searchHomeScreen, id: NavigatorIds.searchHome);
-                  }, icon: Icon(Icons.arrow_back, color: AppColors.primaryTextWhite)),
-                ),
-                Expanded(child: CustomErrorWidget(statusCode: controller.statusCode.value)),
-              ],
-            );
-          }
+    return Scaffold(body: Obx(() {
+      if (controller.isErrorConnection.value) {
+        return Column(
+          children: [
+            AppBar(
+              backgroundColor: AppColors.primaryThemeBlack,
+              leading: IconButton(
+                  onPressed: () {
+                    Get.toNamed(Routes.searchHomeScreen,
+                        id: NavigatorIds.searchHome);
+                  },
+                  icon: Icon(Icons.arrow_back,
+                      color: AppColors.primaryTextWhite)),
+            ),
+            Expanded(
+                child:
+                    CustomErrorWidget(statusCode: controller.statusCode.value)),
+          ],
+        );
+      }
 
-          if(controller.isLoading.value){
-            return Center(child: CircularProgressIndicator());
-          } else{
-            return CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                      backgroundColor: AppColors.primaryThemeBlack,
-                      surfaceTintColor: Colors.transparent,
-                      pinned: true,
-                      floating: false,
-                      expandedHeight: 500.h,
-                      elevation: 0,
-                      iconTheme: IconThemeData(color: Colors.white),
-                      flexibleSpace: backgroundAppBarWidget()),
-                  SliverList.list(
-                    children: [
-                      SizedBox(height: 10.h),
-                      Padding(
-                        padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+      if (controller.isLoading.value) {
+        return Center(child: CircularProgressIndicator());
+      } else {
+        return CustomScrollView(
+          slivers: [
+            SliverAppBar(
+                backgroundColor: AppColors.primaryThemeBlack,
+                surfaceTintColor: Colors.transparent,
+                pinned: true,
+                floating: false,
+                expandedHeight: 500.h,
+                elevation: 0,
+                iconTheme: IconThemeData(color: Colors.white),
+                flexibleSpace: backgroundAppBarWidget()),
+            SliverList.list(
+              children: [
+                SizedBox(height: 10.h),
+                Padding(
+                  padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                            controller.film.value?.nameRu == null
+                                ? controller.film.value?.nameOriginal == null
+                                    ? "Название отсутствует"
+                                    : controller.film.value!.nameOriginal
+                                        .toString()
+                                : controller.film.value!.nameRu.toString(),
+                            style: CustomTextStyles.m3HeadlineMedium()
+                                .copyWith(height: 1),
+                            textAlign: TextAlign.center),
+                        SizedBox(height: 10.h),
+                        mainFilmInformation(),
+                        SizedBox(height: 10.h),
+                        Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                  controller.film.value?.nameRu == null
-                                      ? controller.film.value?.nameOriginal == null ? "Название отсутствует" : controller.film.value!.nameOriginal.toString()
-                                      : controller.film.value!.nameRu.toString(),
-                                  style: CustomTextStyles.m3HeadlineMedium()
-                                      .copyWith(height: 1),
-                                  textAlign: TextAlign.center),
-                              SizedBox(height: 10.h),
-                              mainFilmInformation(),
-                              SizedBox(height: 10.h),
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    AnimatedSwitcher(
-                                      duration: Duration(milliseconds: 100),
-                                      child: controller.filmIsWillWatch.value
-                                      ? customIconButton(
-                                        label: "Не буду смотреть",
-                                        icon: Icon(Icons.delete_outline, size: 30.w, color: AppColors.ratingRed),
-                                        textColor: AppColors.ratingRed,
-                                        function: () async {
-                                          try{
-                                            // TODO: Функция удаления фильма из "Буду смотреть"
-                                            controller.removeFilmFromWillWatchCollection();
-                                          } catch(e){
-                                            log(e.toString());
-                                          }
-                                        })
-                                      : customIconButton(
-                                        label: "Буду смотреть",
-                                        icon: Icon(Icons.bookmark_add_outlined, size: 30.w, color: AppColors.primaryScheme),
-                                        textColor: AppColors.primaryScheme,
-                                        function: () async {
-                                          try{
-                                            controller.saveFilmInWillWatchCollection();
-                                          } catch(e){
-                                            log(e.toString());
-                                          }
-                                        }), 
-                                      ),
-                                    customIconButton(
-                                        label:"Подробнее",
-                                        icon: Icon(Icons.public, size: 30.w, color: AppColors.primaryScheme),
-                                        textColor: AppColors.primaryScheme,
-                                        ),
-                                    // TODO: Реализовать альтернативную кнопку для удаления
-                                    customIconButton(
-                                        label: "В коллекцию",
-                                        icon: Icon(Icons.my_library_add_outlined,size: 30.w),
-                                        textColor: AppColors.primaryScheme
-                                        ),
-                                  ]),
-                              SizedBox(height: 40.h),
-                              filmDescription(),
-                              SizedBox(height: 20.h),
-                              filmSlogan(),
-                              SizedBox(height: 20.h),
-                              filmRatingAndReviewCount(
-                                  "assets/icons/kp.jpg",
-                                  "Рейтинг KP",
-                                  controller.film.value?.ratingKinopoisk,
-                                  controller
-                                      .film.value?.ratingKinopoiskVoteCount),
-                              SizedBox(height: 10.h),
-                              filmRatingAndReviewCount(
-                                  "assets/icons/imdb.png",
-                                  "Рейтинг IMDB",
-                                  controller.film.value?.ratingImdb,
-                                  controller.film.value?.ratingImdbVoteCount),
-                              SizedBox(height: 20.h),
-                              if (controller.imagesFilm.value!.items.isNotEmpty)
-                                filmImages()
+                              ElevatedButton.icon(
+                                label: Text("Не смотрел",
+                                    style: CustomTextStyles.m3BodyLarge(
+                                            color: AppColors.primaryScheme)
+                                        .copyWith(
+                                            fontWeight: FontWeight.w800,
+                                            height: 1.3)),
+                                iconAlignment: IconAlignment.end,
+                                icon: Icon(Icons.arrow_drop_down,
+                                    color: AppColors.primaryScheme),
+                                style: ButtonStyle(
+                                    shape: WidgetStatePropertyAll<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            side: BorderSide(
+                                                color: AppColors.primaryScheme,
+                                                width: 2))),
+                                    backgroundColor: WidgetStatePropertyAll(
+                                        Colors.transparent)),
+                                onPressed: () {
+                                  // TODO: Вызов диалога для выбора статуса фильма
+                                },
+                              ),
+                              SizedBox(width: 20.w),
+                              ElevatedButton.icon(
+                                  label: Text("Подробнее",
+                                      style: CustomTextStyles.m3BodyLarge(
+                                              color: AppColors.primaryScheme)
+                                          .copyWith(
+                                              fontWeight: FontWeight.w800,
+                                              height: 1.3)),
+                                  iconAlignment: IconAlignment.end,
+                                  icon: Icon(Icons.public,
+                                      color: AppColors.primaryScheme),
+                                  style: ButtonStyle(
+                                      shape: WidgetStatePropertyAll<RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              side: BorderSide(
+                                                  color:
+                                                      AppColors.primaryScheme,
+                                                  width: 2))),
+                                      backgroundColor:
+                                          WidgetStatePropertyAll(Colors.transparent)),
+                                  onPressed: () {
+                                    bool urlIsOpened =
+                                        controller.launchFilmWebURL();
+                                    if (!urlIsOpened) {
+                                      Get.snackbar(
+                                        "",
+                                        "",
+                                        titleText: Text(
+                                          "Ошибка", 
+                                          style: CustomTextStyles.m3BodyLarge(
+                                            color: AppColors.primaryThemeBlack).copyWith(fontWeight: FontWeight.w800,height: 1.3)),
+                                        messageText: Text(
+                                          "Ссылка недоступна", 
+                                          style: CustomTextStyles.m3BodyLarge(
+                                            color: AppColors.primaryThemeBlack).copyWith(fontWeight: FontWeight.w400,height: 1.3)),
+                                        icon: Icon(Icons.error, color: AppColors.primaryThemeBlack),
+                                        snackPosition: SnackPosition.TOP,
+                                        backgroundColor:
+                                            AppColors.primaryScheme,
+                                        colorText: AppColors.primaryThemeBlack,
+                                      );
+                                    }
+                                  }),
                             ]),
-                      ),
-                    ],
-                  ),
-                ],
-              );
-          }
-      })
-    );
+                        SizedBox(height: 20.h),
+                        filmDescription(),
+                        SizedBox(height: 20.h),
+                        filmSlogan(),
+                        SizedBox(height: 20.h),
+                        filmRatingAndReviewCount(
+                            "assets/icons/kp.jpg",
+                            "Рейтинг KP",
+                            controller.film.value?.ratingKinopoisk,
+                            controller.film.value?.ratingKinopoiskVoteCount),
+                        SizedBox(height: 10.h),
+                        filmRatingAndReviewCount(
+                            "assets/icons/imdb.png",
+                            "Рейтинг IMDB",
+                            controller.film.value?.ratingImdb,
+                            controller.film.value?.ratingImdbVoteCount),
+                        SizedBox(height: 20.h),
+                        if (controller.imagesFilm.value!.items.isNotEmpty)
+                          filmImages()
+                      ]),
+                ),
+              ],
+            ),
+          ],
+        );
+      }
+    }));
   }
 
   Widget backgroundAppBarWidget() {
@@ -146,7 +185,6 @@ class FilmScreen extends GetView<FilmController> {
         final double minAppBarHeight =
             kToolbarHeight + MediaQuery.of(context).padding.top;
         final bool isCollapsed = currentHeight <= minAppBarHeight + 5;
-
         return Stack(
           fit: StackFit.expand,
           children: [
@@ -202,42 +240,58 @@ class FilmScreen extends GetView<FilmController> {
       child: Padding(
           padding: EdgeInsets.all(12.h),
           child: SizedBox(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (controller.film.value?.nameOriginal != null) ...[
-                  Text(controller.film.value?.nameOriginal ?? "-",
-                      style: CustomTextStyles.m3BodyMedium(
-                              color: AppColors.primaryTextWhite)
-                          .copyWith(
-                        fontStyle: FontStyle.italic,
-                      ),
-                      textAlign: TextAlign.center),
-                  SizedBox(height: 10.h),
-                ],
-                controller.film.value?.serial == true
-                    ? Text(
-                        "${controller.film.value?.startYear} - ${controller.film.value?.endYear ?? "настоящее время"}",
-                        style: CustomTextStyles.m3BodyMedium(),
-                        textAlign: TextAlign.center)
-                    : Text("${controller.film.value?.year}",
-                        style: CustomTextStyles.m3BodyMedium(),
-                        textAlign: TextAlign.center),
-                SizedBox(height: 10.h),
-                Text(getGenresValue(controller.film.value?.genres),
-                    style: CustomTextStyles.m3BodyMedium(),
-                    textAlign: TextAlign.center),
-                SizedBox(height: 10.h),
-                Text(getCountriesValue(controller.film.value?.countries),
-                    style: CustomTextStyles.m3BodyMedium(),
-                    textAlign: TextAlign.center),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (controller.film.value?.nameOriginal != null) ...[
+                        Text(controller.film.value?.nameOriginal ?? "-",
+                            style: CustomTextStyles.m3BodyLarge(
+                                    color: AppColors.primaryTextWhite)
+                                .copyWith(
+                              fontStyle: FontStyle.italic,
+                            ),
+                            textAlign: TextAlign.center),
+                        SizedBox(height: 10.h),
+                      ],
+                      controller.film.value?.serial == true
+                          ? Text(
+                              "${controller.film.value?.startYear} - ${controller.film.value?.endYear ?? "настоящее время"}",
+                              style: CustomTextStyles.m3BodyLarge().copyWith(
+                                  fontWeight: FontWeight.w800, height: 1.3),
+                              textAlign: TextAlign.center)
+                          : Text("${controller.film.value?.year}",
+                              style: CustomTextStyles.m3BodyLarge().copyWith(
+                                  fontWeight: FontWeight.w800, height: 1.3),
+                              textAlign: TextAlign.center),
+                      SizedBox(height: 10.h),
+                      Text(getGenresValue(controller.film.value?.genres),
+                          style: CustomTextStyles.m3BodyLarge().copyWith(
+                              fontWeight: FontWeight.w800, height: 1.3),
+                          maxLines: 3,
+                          textAlign: TextAlign.start),
+                      SizedBox(height: 10.h),
+                      Text(getCountriesValue(controller.film.value?.countries),
+                          style: CustomTextStyles.m3BodyLarge().copyWith(
+                              fontWeight: FontWeight.w800, height: 1.3),
+                          textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
               ],
             ),
           )),
     );
   }
 
-  Widget customIconButton({required String label, required Icon icon, required Color textColor, VoidCallback? function}) {
+  Widget customIconButton(
+      {required String label,
+      required Icon icon,
+      required Color textColor,
+      VoidCallback? function}) {
     return ElevatedButton(
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(AppColors.primaryThemeBlack),
@@ -248,14 +302,11 @@ class FilmScreen extends GetView<FilmController> {
             icon,
             SizedBox(height: 10.h),
             Text(label,
-            maxLines: 2,
-                  style: CustomTextStyles.m3LabelMedium(
-                      color: textColor),
-                  textAlign: TextAlign.center
-            ),
+                maxLines: 2,
+                style: CustomTextStyles.m3LabelMedium(color: textColor),
+                textAlign: TextAlign.center),
           ],
-        )
-      );
+        ));
   }
 
   Widget filmDescription() {
@@ -410,8 +461,7 @@ class FilmScreen extends GetView<FilmController> {
   }
 
   String getGenresValue(BuiltList<Genre>? genresBuiltList) {
-
-    if(genresBuiltList == null){
+    if (genresBuiltList == null) {
       return "Данные отсутствуют";
     }
 
@@ -421,8 +471,7 @@ class FilmScreen extends GetView<FilmController> {
   }
 
   String getCountriesValue(BuiltList<Country>? countriesBuiltList) {
-
-    if(countriesBuiltList == null){
+    if (countriesBuiltList == null) {
       return "Данные отсутствуют";
     }
 

@@ -11,11 +11,11 @@ class CustomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() => NavigationBar(
           backgroundColor: AppColors.primaryThemeBlack,
-          indicatorColor: Theme.of(context).primaryColor,
+          indicatorColor: AppColors.primaryScheme,
           elevation: 10,
           selectedIndex: NavigationController.to.currentIndex.value,
           onDestinationSelected: (index) => NavigationController.to.changeIndex(index),
-          labelTextStyle: WidgetStatePropertyAll(CustomTextStyles.m3LabelMedium()),
+          labelTextStyle: WidgetStatePropertyAll(CustomTextStyles.m3BodyMedium().copyWith(fontWeight: FontWeight.w800)),
           destinations: [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),

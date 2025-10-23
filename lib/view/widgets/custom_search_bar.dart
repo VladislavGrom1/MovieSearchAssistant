@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
+import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 
 import '../../infrastructure/navigation/routes.dart';
 
@@ -32,6 +33,7 @@ class CustomSearchBar extends StatelessWidget{
                   ),
                 Expanded(
                   child: TextField(
+                    
                     controller: textEditingController,
                     focusNode: focusNode,
                     textInputAction: TextInputAction.search,
@@ -60,7 +62,9 @@ class CustomSearchBar extends StatelessWidget{
                       }
                     },
                     cursorColor: isFocus.value ? AppColors.primaryThemeBlack : AppColors.primaryTextGrey,
-                  style: TextStyle(color: isFocus.value ? AppColors.primaryThemeBlack : AppColors.primaryTextGrey),
+                  style: CustomTextStyles.m3TitleMedium(color: isFocus.value ? AppColors.primaryThemeBlack : AppColors.primaryTextGrey).copyWith(
+                    fontWeight: FontWeight.w800
+                  ),
                   decoration: InputDecoration(
                     border: InputBorder.none
                   ),

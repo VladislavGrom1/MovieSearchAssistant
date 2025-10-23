@@ -20,6 +20,7 @@ dependencies:
   built_collection: ^5.1.1
   openapi_generator_annotations: ^6.1.0
   flutter_screenutil: ^5.9.3
+  url_launcher: ^6.3.2
   flutter:
     sdk: flutter
 
