@@ -5,6 +5,7 @@ import 'package:movie_search_assistant/infrastructure/storage/film_storage.dart'
 import 'package:movie_search_assistant/infrastructure/storage/user_storage.dart';
 import 'package:movie_search_assistant/repositories/film_repository.dart';
 import 'package:movie_search_assistant/repositories/user_repository.dart';
+import 'package:movie_search_assistant/services/film_state_service.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 
 class DiInit {
@@ -16,5 +17,6 @@ class DiInit {
     Get.put(GlobalApiService());
     Get.put(RootController());
     Get.put(LoginController());
+    Get.put(FilmStateService());
   }
 }

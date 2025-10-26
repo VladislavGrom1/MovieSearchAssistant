@@ -4,6 +4,7 @@ import 'package:movie_search_assistant/infrastructure/navigation/route_manager.d
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/infrastructure/storage/storage_manager.dart';
 import 'package:movie_search_assistant/services/di_init.dart';
+import 'package:movie_search_assistant/services/film_state_service.dart';
 import 'package:movie_search_assistant/services/hive_init.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,6 +17,8 @@ Future<void> main() async {
   //await StorageManager.clearUserFilmsBox();
   runApp(const MyApp());
 }
+
+// TODO: При отсутствии интернета постеры из локального хранилища не загрузятся, т.к там URL
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

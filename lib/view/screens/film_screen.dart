@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generated/generated.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
+import 'package:movie_search_assistant/constants/watch_statuses.dart';
 import 'package:movie_search_assistant/controllers/film_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
@@ -15,10 +16,20 @@ import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class FilmScreen extends GetView<FilmController> {
+class FilmScreen extends StatelessWidget {
+  final int idFilm;
+  final int navId;
+
+  const FilmScreen({super.key, required this.idFilm, required this.navId});
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Obx(() {
+    final tag = '${navId}_$idFilm';
+    final controller = Get.find<FilmController>(tag: tag);
+
+    return Scaffold(
+      body: Obx(() {
+        // TODO: Адаптировать под Таб "Буду Смотреть"
       if (controller.isErrorConnection.value) {
         return Column(
           children: [
@@ -33,8 +44,7 @@ class FilmScreen extends GetView<FilmController> {
                       color: AppColors.primaryTextWhite)),
             ),
             Expanded(
-                child:
-                    CustomErrorWidget(statusCode: controller.statusCode.value)),
+                child: CustomErrorWidget(statusCode: controller.statusCode.value)),
           ],
         );
       }
@@ -45,6 +55,20 @@ class FilmScreen extends GetView<FilmController> {
         return CustomScrollView(
           slivers: [
             SliverAppBar(
+                leading: IconButton(
+                  onPressed: () {
+                    final status = controller.selectedRadioValue.value;
+                    final filmId = controller.film.value?.kinopoiskId;
+
+                    if (status == WatchStatuses.DONT_WATCH && filmId != null) {
+                      Get.back(result: filmId, id: controller.navId);
+                    } else {
+                      Get.back(id: controller.navId);
+                    }
+
+                  },
+                  icon: Icon(Icons.arrow_back, color: AppColors.primaryTextWhite),
+                ),
                 backgroundColor: AppColors.primaryThemeBlack,
                 surfaceTintColor: Colors.transparent,
                 pinned: true,
@@ -52,7 +76,7 @@ class FilmScreen extends GetView<FilmController> {
                 expandedHeight: 500.h,
                 elevation: 0,
                 iconTheme: IconThemeData(color: Colors.white),
-                flexibleSpace: backgroundAppBarWidget()),
+                flexibleSpace: backgroundAppBarWidget(controller)),
             SliverList.list(
               children: [
                 SizedBox(height: 10.h),
@@ -73,34 +97,88 @@ class FilmScreen extends GetView<FilmController> {
                                 .copyWith(height: 1),
                             textAlign: TextAlign.center),
                         SizedBox(height: 10.h),
-                        mainFilmInformation(),
+                        mainFilmInformation(controller),
                         SizedBox(height: 10.h),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton.icon(
-                                label: Text("Не смотрел",
-                                    style: CustomTextStyles.m3BodyLarge(
-                                            color: AppColors.primaryScheme)
-                                        .copyWith(
-                                            fontWeight: FontWeight.w800,
-                                            height: 1.3)),
+                                label: Text(controller.selectedRadioValue.value,
+                                    style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryScheme).copyWith(fontWeight: FontWeight.w800, height: 1.3)),
                                 iconAlignment: IconAlignment.end,
-                                icon: Icon(Icons.arrow_drop_down,
-                                    color: AppColors.primaryScheme),
+                                icon: Icon(Icons.arrow_drop_down, color: AppColors.primaryScheme),
                                 style: ButtonStyle(
                                     shape: WidgetStatePropertyAll<
                                             RoundedRectangleBorder>(
                                         RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            side: BorderSide(
-                                                color: AppColors.primaryScheme,
-                                                width: 2))),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        Colors.transparent)),
-                                onPressed: () {
-                                  // TODO: Вызов диалога для выбора статуса фильма
+                                            borderRadius: BorderRadius.circular(5),
+                                            side: BorderSide(color: AppColors.primaryScheme, width: 2))),
+                                    backgroundColor: WidgetStatePropertyAll(Colors.transparent)),
+                                onPressed: () async {
+                                  await Get.dialog(
+                                    Obx(() => AlertDialog(
+                                    backgroundColor:AppColors.secondaryThemeGrey,
+                                    title: Text("Выберите статус просмотра", style: CustomTextStyles.m3HeadlineMedium(color: AppColors.primaryTextGrey).copyWith(height: 1.3)),
+                                    content: SizedBox(
+                                      height: 240.h,
+                                      child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            RadioGroup<String>(
+                                                groupValue: controller.selectedRadioValue.value,
+                                                onChanged: (value) async {
+                                                  controller.updateSelectionRadioValue(value);
+                                                  if(value == WatchStatuses.DONT_WATCH){
+                                                    await controller.removeFilmFromCategory();
+                                                  }
+                                                  else{
+                                                    await controller.saveFilmInCollection();
+                                                  }
+                                                  Get.back();
+                                                },
+                                                child: Column(
+                                                  children: [
+                                                    ListTile(
+                                                      leading: Radio<String>(
+                                                        fillColor:WidgetStatePropertyAll(AppColors.primaryTextGrey),
+                                                        value: WatchStatuses.DONT_WATCH,
+                                                      ),
+                                                      title: Text(WatchStatuses.DONT_WATCH, style: CustomTextStyles.m3TitleMedium().copyWith(fontWeight: FontWeight.w800)),
+                                                    ),
+                                                    ListTile(
+                                                      leading: Radio<String>(
+                                                        fillColor: WidgetStatePropertyAll(AppColors.primaryTextGrey),
+                                                        value: WatchStatuses.WILL_WATCH,
+                                                      ),
+                                                      title: Text(WatchStatuses.WILL_WATCH, style: CustomTextStyles.m3TitleMedium().copyWith(fontWeight: FontWeight.w800)),
+                                                    ),
+                                                    ListTile(
+                                                      leading: Radio<String>(
+                                                        fillColor: WidgetStatePropertyAll(AppColors.primaryTextGrey),
+                                                        value: WatchStatuses.WATCHED,
+                                                      ),
+                                                      title: Text(WatchStatuses.WATCHED, style: CustomTextStyles.m3TitleMedium().copyWith(fontWeight:FontWeight.w800)),
+                                                    ),
+                                                  ],
+                                                )),
+                                            SizedBox(height: 20.h),
+                                            ElevatedButton(
+                                              style: ButtonStyle(
+                                                  minimumSize: WidgetStatePropertyAll(Size(double.infinity, 40.h)),
+                                                  alignment: AlignmentGeometry.center,
+                                                  backgroundColor: WidgetStatePropertyAll(AppColors.primaryScheme)),
+                                              onPressed: () async {
+                                                Get.back();
+                                              },
+                                              child: Text("Отмена",
+                                                  style: CustomTextStyles.m3TitleMedium(color: AppColors.primaryTextWhite).copyWith(fontWeight:FontWeight.w800)),
+                                            ),
+                                          ]
+                                          ),
+                                      ),
+                                    )
+                                    )
+                                  );
                                 },
                               ),
                               SizedBox(width: 20.w),
@@ -132,15 +210,22 @@ class FilmScreen extends GetView<FilmController> {
                                       Get.snackbar(
                                         "",
                                         "",
-                                        titleText: Text(
-                                          "Ошибка", 
-                                          style: CustomTextStyles.m3BodyLarge(
-                                            color: AppColors.primaryThemeBlack).copyWith(fontWeight: FontWeight.w800,height: 1.3)),
-                                        messageText: Text(
-                                          "Ссылка недоступна", 
-                                          style: CustomTextStyles.m3BodyLarge(
-                                            color: AppColors.primaryThemeBlack).copyWith(fontWeight: FontWeight.w400,height: 1.3)),
-                                        icon: Icon(Icons.error, color: AppColors.primaryThemeBlack),
+                                        titleText: Text("Ошибка",
+                                            style: CustomTextStyles.m3BodyLarge(
+                                                    color: AppColors
+                                                        .primaryThemeBlack)
+                                                .copyWith(
+                                                    fontWeight: FontWeight.w800,
+                                                    height: 1.3)),
+                                        messageText: Text("Ссылка недоступна",
+                                            style: CustomTextStyles.m3BodyLarge(
+                                                    color: AppColors
+                                                        .primaryThemeBlack)
+                                                .copyWith(
+                                                    fontWeight: FontWeight.w400,
+                                                    height: 1.3)),
+                                        icon: Icon(Icons.error,
+                                            color: AppColors.primaryThemeBlack),
                                         snackPosition: SnackPosition.TOP,
                                         backgroundColor:
                                             AppColors.primaryScheme,
@@ -150,9 +235,9 @@ class FilmScreen extends GetView<FilmController> {
                                   }),
                             ]),
                         SizedBox(height: 20.h),
-                        filmDescription(),
+                        filmDescription(controller),
                         SizedBox(height: 20.h),
-                        filmSlogan(),
+                        filmSlogan(controller),
                         SizedBox(height: 20.h),
                         filmRatingAndReviewCount(
                             "assets/icons/kp.jpg",
@@ -167,7 +252,7 @@ class FilmScreen extends GetView<FilmController> {
                             controller.film.value?.ratingImdbVoteCount),
                         SizedBox(height: 20.h),
                         if (controller.imagesFilm.value!.items.isNotEmpty)
-                          filmImages()
+                          filmImages(controller)
                       ]),
                 ),
               ],
@@ -178,7 +263,7 @@ class FilmScreen extends GetView<FilmController> {
     }));
   }
 
-  Widget backgroundAppBarWidget() {
+  Widget backgroundAppBarWidget(FilmController controller) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final double currentHeight = constraints.biggest.height;
@@ -234,7 +319,7 @@ class FilmScreen extends GetView<FilmController> {
     );
   }
 
-  Widget mainFilmInformation() {
+  Widget mainFilmInformation(FilmController controller) {
     return Card(
       color: AppColors.secondaryThemeGrey,
       child: Padding(
@@ -309,7 +394,7 @@ class FilmScreen extends GetView<FilmController> {
         ));
   }
 
-  Widget filmDescription() {
+  Widget filmDescription(FilmController controller) {
     return Card(
       color: AppColors.secondaryThemeGrey,
       child: Padding(
@@ -323,7 +408,7 @@ class FilmScreen extends GetView<FilmController> {
     );
   }
 
-  Widget filmSlogan() {
+  Widget filmSlogan(FilmController controller) {
     return Card(
       color: AppColors.secondaryThemeGrey,
       child: Padding(
@@ -398,7 +483,7 @@ class FilmScreen extends GetView<FilmController> {
     );
   }
 
-  Widget filmImages() {
+  Widget filmImages(FilmController controller) {
     return Column(
       children: [
         Row(
@@ -480,3 +565,18 @@ class FilmScreen extends GetView<FilmController> {
     return countriesValue;
   }
 }
+
+// IconButton(
+//                   onPressed: () {
+//                     // Проверяем: если статус "Не смотрю" — возвращаем ID
+//                         if (controller.selectedRadioValue.value == WatchStatuses.DONT_WATCH) {
+//                           if (controller.filmIdKp.value != null) {
+//                             Get.back(result: controller.filmIdKp.value);
+//                             return;
+//                           }
+//                         }
+//                         // Иначе — просто назад
+//                         Get.back();
+//                   },
+//                   icon: Icon(Icons.arrow_back,
+//                       color: AppColors.primaryTextWhite)),

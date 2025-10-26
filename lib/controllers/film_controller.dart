@@ -1,26 +1,36 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:built_collection/built_collection.dart';
 import 'package:generated/generated.dart';
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/constants/navigator_ids.dart';
+import 'package:movie_search_assistant/constants/watch_statuses.dart';
+import 'package:movie_search_assistant/controllers/navigation_controller.dart';
 import 'package:movie_search_assistant/infrastructure/exceptions/api_exception.dart';
 import 'package:movie_search_assistant/models/film_card.dart';
 import 'package:movie_search_assistant/repositories/film_repository.dart';
+import 'package:movie_search_assistant/services/film_state_service.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FilmController extends GetxController {
-  FilmController({required this.idFilm});
+  FilmController({
+    required this.idFilm,
+    required this.navId
+    });
 
   int idFilm;
+  int navId;
 
   GlobalApiService apiService = Get.find<GlobalApiService>();
   FilmRepository filmRepository = Get.find<FilmRepository>();
 
   var film = (null as Film?).obs;
   var imagesFilm = (null as ImageResponse?).obs;
-  var filmIsWillWatch = false.obs;
-  var filmIsFavourite = false.obs;
+  var filmIdKp = (null as int?).obs;
 
+  var selectedRadioValue = "".obs;
+  
   var isLoading = false.obs;
 
   var isErrorConnection = false.obs;
@@ -29,24 +39,25 @@ class FilmController extends GetxController {
   @override
   void onInit() async {
     await getIdFilm();
-    await getFilmCategoryStatuses();
+    await getFilmWatchStatus();
+    ever(FilmStateService.to.updatedFilmIds, (Set<int> updatedIds) {
+      if (updatedIds.contains(idFilm)) {
+        _refreshFilmStatus();
+      }
+    });
     super.onInit();
   }
 
-  Future<void> getFilmCategoryStatuses() async {
-    isLoading.value = true;
+  Future<void> _refreshFilmStatus() async {
     try {
-      FilmCard? filmFromStorage =
-          await filmRepository.getFilmFromStorage(idFilm);
-      if (filmFromStorage != null) {
-        filmIsWillWatch.value = filmFromStorage.isWillWatch!;
-        filmIsFavourite.value = filmFromStorage.isFavourite!;
-      }
+      await getFilmWatchStatus();
     } catch (e) {
-      log(e.toString());
-    } finally {
-      isLoading.value = false;
+      log('Error refreshing film status: $e');
     }
+  }
+
+  void updateSelectionRadioValue(String? value){
+    selectedRadioValue.value = value ?? WatchStatuses.DONT_WATCH;
   }
 
   Future<void> getIdFilm() async {
@@ -54,6 +65,7 @@ class FilmController extends GetxController {
     isErrorConnection.value = false;
     try {
       film.value = await apiService.getIdFilm(idFilm);
+      filmIdKp.value = film.value?.kinopoiskId;
       await getImagesIdFilm();
     } on ApiException catch (e) {
       if (e.statusCode == 401) {
@@ -82,54 +94,41 @@ class FilmController extends GetxController {
     }
   }
 
-  // TODO: Если фильм уже добавлен в Коллекцию, то нужно сделать проверку по id, чтобы просто поменять флаг на isWillWatch
-  // TODO: Переделать UI под выбор одного состояния из 3-х (Не выбрано, Буду Смотреть, Добавить в коллекцию)
+  Future<void> getFilmWatchStatus() async {
+    isLoading.value = true;
+    try{
+      FilmCard? filmCard = await filmRepository.getFilmFromStorage(film.value?.kinopoiskId ?? 1);
+      filmCard == null ? selectedRadioValue.value = WatchStatuses.DONT_WATCH : selectedRadioValue.value = filmCard.watchStatus!;
+    } catch(e){
+      log(e.toString());
+      rethrow;
+    } finally{
+      isLoading.value = false;
+    }
+  } 
 
-  // Future<void> saveFilmInWillWatchCollection() async {
-  //   try {
-  //     FilmCard filmCard = filmToFilmCard(film.value, imagesFilm.value);
-  //     await filmRepository.addFilmInStorage(filmCard);
-  //     filmIsWillWatch.value = true;
-  //     filmIsFavourite.value = false;
-  //   } catch (e) {
-  //     log(e.toString());
-  //     rethrow;
-  //   }
-  // }
+  Future<void> saveFilmInCollection() async {
+    try {
+      FilmCard filmCard = filmToFilmCard(film.value, imagesFilm.value, selectedRadioValue.value);
+      await filmRepository.addFilmInStorage(filmCard);
+      FilmStateService.to.notifyFilmUpdated(idFilm);
+    } catch (e) {
+      log(e.toString());
+      isLoading.value = false;
+      rethrow;
+    }
+  }
 
-  // Future<void> removeFilmFromWillWatchCollection() async {
-  //   try {
-  //     await filmRepository.removeFilmFromStorage(idFilm);
-  //     filmIsWillWatch.value = false;
-  //     filmIsFavourite.value = true;
-  //   } catch (e) {
-  //     log(e.toString());
-  //     rethrow;
-  //   }
-  // }
-
-  // Future<void> saveFilmInFavouriteCollection() async {
-  //   try {
-  //     FilmCard filmCard = filmToFilmCard(film.value, imagesFilm.value);
-  //     await filmRepository.addFilmInStorage(filmCard);
-  //     filmIsWillWatch.value = true;
-  //     filmIsFavourite.value = false;
-  //   } catch (e) {
-  //     log(e.toString());
-  //     rethrow;
-  //   }
-  // }
-
-  // Future<void> removeFilmInFavouriteCollection() async {
-  //   try {
-  //     await filmRepository.removeFilmFromStorage(idFilm);
-  //     filmIsWillWatch.value = false;
-  //     filmIsFavourite.value = true;
-  //   } catch (e) {
-  //     log(e.toString());
-  //     rethrow;
-  //   }
-  // }
+  Future<void> removeFilmFromCategory() async {
+    try {
+      await filmRepository.removeFilmFromStorage(idFilm);
+      selectedRadioValue.value = WatchStatuses.DONT_WATCH;
+      FilmStateService.to.notifyFilmUpdated(idFilm);
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
 
   bool launchFilmWebURL() {
     final url = film.value?.webUrl;
@@ -150,7 +149,7 @@ class FilmController extends GetxController {
   }
 }
 
-FilmCard filmToFilmCard(Film? film, ImageResponse? imagesFilm) {
+FilmCard filmToFilmCard(Film? film, ImageResponse? imagesFilm, String? watchStatus) {
   FilmCard filmCard = FilmCard(
     kinopoiskId: film?.kinopoiskId,
     nameRu: film?.nameRu,
@@ -172,8 +171,7 @@ FilmCard filmToFilmCard(Film? film, ImageResponse? imagesFilm) {
     serial: film?.serial,
     description: film?.description,
     slogan: film?.slogan,
-    isWillWatch: true,
-    isFavourite: false,
+    watchStatus: watchStatus ?? WatchStatuses.DONT_WATCH
   );
   return filmCard;
 }

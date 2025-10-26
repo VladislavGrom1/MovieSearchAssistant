@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
+import 'package:movie_search_assistant/controllers/film_controller.dart';
 import 'package:movie_search_assistant/controllers/will_watching_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
+import 'package:movie_search_assistant/view/screens/film_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_home_screen.dart';
 import 'package:movie_search_assistant/view/screens/will_watching_screen.dart';
 
@@ -14,12 +16,21 @@ class WillWatchingNavigator extends StatelessWidget{
     return Navigator(
       key: Get.nestedKey(NavigatorIds.willWatching),
       onGenerateRoute: (settings) {
-        // TODO: Заменить if на вложенный экран, когда он появится
-        if(settings.name == Routes.willWatchingScreen){
+        if(settings.name == Routes.filmScreen){
+
+          int idFilm = settings.arguments as int;
+
+          final tag = '${NavigatorIds.willWatching}_$idFilm';
+          if (Get.isRegistered<FilmController>(tag: tag)) {
+            Get.delete<FilmController>(tag: tag);
+          }
+          Get.put(FilmController(idFilm: idFilm, navId: NavigatorIds.willWatching), tag: tag);
+
           return GetPageRoute(
             settings: settings,
-            page: () => WillWatchingScreen(),
+            page: () => FilmScreen(idFilm: idFilm, navId: NavigatorIds.willWatching)
           );
+          
         } else{
           Get.put(WillWatchingController());
           return GetPageRoute(

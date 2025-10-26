@@ -5,15 +5,14 @@ import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 class CustomErrorWidget extends StatelessWidget {
   CustomErrorWidget({
     super.key,
-    required this.statusCode,
+    this.statusCode,
   });
 
-  int statusCode;
+  int? statusCode;
 
   @override
   Widget build(BuildContext context) {
     Map<String, String> message = switchErrorMessage(statusCode);
-
     return ListView(
       children: [
         Image.asset(
@@ -27,7 +26,7 @@ class CustomErrorWidget extends StatelessWidget {
     );
   }
 
-  Map<String, String> switchErrorMessage(int statusCode) {
+  Map<String, String> switchErrorMessage(int? statusCode) {
     Map<String, String> message = {
       "title": "Произошла ошибка",
       "description": "Неизвестная ошибка"

@@ -33,7 +33,6 @@ class CustomSearchBar extends StatelessWidget{
                   ),
                 Expanded(
                   child: TextField(
-                    
                     controller: textEditingController,
                     focusNode: focusNode,
                     textInputAction: TextInputAction.search,
@@ -85,7 +84,7 @@ class CustomSearchBar extends StatelessWidget{
                         : IconButton(
                             key: ValueKey('filter'),
                             onPressed: () {
-                              Get.offAllNamed(Routes.switchFiltersScreen, id: NavigatorIds.searchHome);
+                              Get.toNamed(Routes.switchFiltersScreen, id: NavigatorIds.searchHome);
                             },
                             icon: Icon(Icons.filter_alt_outlined, color: AppColors.primaryTextGrey)
                           )

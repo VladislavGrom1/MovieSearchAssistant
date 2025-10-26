@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:generated/generated.dart';
+import 'package:movie_search_assistant/models/film_card.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 
@@ -49,6 +50,34 @@ class SearchMovieCard extends StatelessWidget{
       ratingKinopoisk: film.ratingKinopoisk,
       countries: film.countries,
       genres: film.genres,
+      year: film.year,
+    );
+  }
+
+  factory SearchMovieCard.fromStorage(FilmCard? film){
+    if(film == null) return SearchMovieCard();
+
+    BuiltList<Genre>? genresBuiltList;
+    if (film.genres != null) {
+      genresBuiltList = BuiltList.from(
+        film.genres!.map((genreName) => Genre((b) => b..genre = genreName)),
+      );
+    }
+
+    BuiltList<Country>? countriesBuiltList;
+    if (film.countries != null) {
+      countriesBuiltList = BuiltList.from(
+        film.countries!.map((countryName) => $Country((b) => b..country = countryName)),
+      );
+    }
+
+    return SearchMovieCard(
+      nameRu: film.nameRu,
+      nameOriginal: film.nameOriginal,
+      posterUrl: film.posterUrl,
+      ratingKinopoisk: film.ratingKinopoisk,
+      countries: countriesBuiltList,
+      genres: genresBuiltList,
       year: film.year,
     );
   }

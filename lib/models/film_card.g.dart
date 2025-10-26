@@ -34,15 +34,14 @@ class FilmCardAdapter extends TypeAdapter<FilmCard> {
       serial: fields[14] as bool?,
       description: fields[15] as String?,
       slogan: fields[16] as String?,
-      isWillWatch: fields[17] as bool?,
-      isFavourite: fields[18] as bool?,
+      watchStatus: fields[17] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, FilmCard obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(18)
       ..writeByte(0)
       ..write(obj.kinopoiskId)
       ..writeByte(1)
@@ -78,9 +77,7 @@ class FilmCardAdapter extends TypeAdapter<FilmCard> {
       ..writeByte(16)
       ..write(obj.slogan)
       ..writeByte(17)
-      ..write(obj.isWillWatch)
-      ..writeByte(18)
-      ..write(obj.isFavourite);
+      ..write(obj.watchStatus);
   }
 
   @override

@@ -24,8 +24,7 @@ class FilmCard {
   @HiveField(14) final bool? serial;
   @HiveField(15) final String? description;
   @HiveField(16) final String? slogan;
-  @HiveField(17) final bool? isWillWatch;
-  @HiveField(18) final bool? isFavourite;
+  @HiveField(17) final String? watchStatus;
 
   FilmCard({
     this.kinopoiskId,
@@ -45,7 +44,6 @@ class FilmCard {
     this.serial,
     this.description,
     this.slogan,
-    this.isWillWatch,
-    this.isFavourite,
+    this.watchStatus
   });
 }
