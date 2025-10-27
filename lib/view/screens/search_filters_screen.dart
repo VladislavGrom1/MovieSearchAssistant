@@ -10,7 +10,7 @@ import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
-import 'package:movie_search_assistant/view/widgets/search_movie_card.dart';
+import 'package:movie_search_assistant/view/widgets/preview_film_card.dart';
 
 class SearchFiltersScreen extends GetView<SearchFiltersController> {
   SearchFiltersScreen({super.key});
@@ -69,38 +69,37 @@ class SearchFiltersScreen extends GetView<SearchFiltersController> {
       itemBuilder: (context, index) {
         if (controller.filteredKeywordFilms.value.items.isEmpty &&
             controller.isLoading.value) {
-          return SearchMovieCard.fromFilters(null);
+          return PreviewFilmCard.fromFilters(null);
         }
 
-        if (index == controller.filteredKeywordFilms.value.items.length) {
+        if (index == controller.filteredKeywordFilms.value.items.length - 1) {
           if (controller.isLoading.value) {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Center(child: CircularProgressIndicator()),
             );
           }
-          if (controller.totalPages.value != null &&
-              controller.currentPage.value >= controller.totalPages.value!) {
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 24.h),
-              child: Center(
-                child: Text(
-                  "Все фильмы загружены",
-                  style: CustomTextStyles.m3TitleLarge().copyWith(
-                    color: AppColors.primaryTextGrey,
-                    fontSize: 14.sp,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            );
-          }
+          return Column(
+          children: [
+            SizedBox(height: 10.h),
+            Divider(thickness: 4.h, color: AppColors.primaryScheme),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.warning_amber_rounded, color: AppColors.primaryScheme, size: 30.h),
+                Text("Все фильмы загружены", style: CustomTextStyles.m3BodyLarge().copyWith(fontWeight: FontWeight.w600))
+              ],
+            ),
+            SizedBox(height: 20.h),
+          ],
+        );
         }
         return InkWell(
           onTap: () {
             Get.toNamed(Routes.filmScreen, arguments: controller.filteredKeywordFilms.value.items[index].kinopoiskId, id: NavigatorIds.searchHome);
           },
-          child: SearchMovieCard.fromFilters(controller.filteredKeywordFilms.value.items[index])
+          child: PreviewFilmCard.fromFilters(controller.filteredKeywordFilms.value.items[index])
         );
       },
     );

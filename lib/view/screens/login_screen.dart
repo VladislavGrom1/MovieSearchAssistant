@@ -138,8 +138,7 @@ class LoginScreen extends GetView<LoginController> {
                     }
                   },
                   child: Text("Проверить API Key",
-                      style: CustomTextStyles.m3BodyLarge(
-                          color: AppColors.primaryTextWhite)),
+                      style: CustomTextStyles.m3TitleMedium(color: AppColors.primaryTextWhite).copyWith(fontWeight: FontWeight.w800)),
                 ),
                 SizedBox(height: 20.h),
                 Center(
@@ -161,8 +160,7 @@ class LoginScreen extends GetView<LoginController> {
                     Get.offAllNamed(Routes.navigationScreen);
                   },
                   child: Text("Пропустить",
-                      style: CustomTextStyles.m3BodyLarge(
-                          color: AppColors.primaryTextWhite)),
+                      style: CustomTextStyles.m3TitleMedium(color: AppColors.primaryTextWhite).copyWith(fontWeight: FontWeight.w800)),
                 ),
               ],
             ),

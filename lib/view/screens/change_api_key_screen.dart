@@ -126,7 +126,7 @@ class ChangeApiKeyScreen extends GetView<ChangeApiKeyController>{
                     }
 
                   }, 
-                child: Text("Изменить API Key", style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryTextWhite)),
+                child: Text("Сохранить изменения", style: CustomTextStyles.m3TitleMedium(color: AppColors.primaryTextWhite).copyWith(fontWeight: FontWeight.w800)),
               ),
             ]
           ),

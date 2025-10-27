@@ -54,7 +54,7 @@ class UserProfileScreen extends GetView<UserProfileController>{
                       await controller.getUserApiKey();
                     }
                   }, 
-                child: Text("Изменить API Key", style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryTextWhite)),
+                child: Text("Изменить API Key", style: CustomTextStyles.m3TitleMedium(color: AppColors.primaryTextWhite).copyWith(fontWeight: FontWeight.w800)),
               ),
             ]
           ),

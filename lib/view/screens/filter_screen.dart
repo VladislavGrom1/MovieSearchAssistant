@@ -32,7 +32,7 @@ class FilterScreen extends GetView<FilterController>{
                   itemBuilder: (context, index) => InkWell(
                     onTap: () {
                       controller.pickFilterValue(controller.filterData!.items.values.elementAt(index));
-                      Get.offAllNamed(Routes.switchFiltersScreen, id: NavigatorIds.searchHome);
+                      Get.toNamed(Routes.switchFiltersScreen, id: NavigatorIds.searchHome);
                     },
                     child: Padding(
                       padding: EdgeInsets.only(left: 20.w, right: 20.w),

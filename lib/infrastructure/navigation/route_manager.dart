@@ -4,7 +4,7 @@ import 'package:movie_search_assistant/bindings/navigation_binding.dart';
 import 'package:movie_search_assistant/controllers/login_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/screens/login_screen.dart';
-import 'package:movie_search_assistant/view/screens/movie_library_screen.dart';
+import 'package:movie_search_assistant/view/screens/watched_library_screen.dart';
 import 'package:movie_search_assistant/view/screens/navigation_screen.dart';
 import 'package:movie_search_assistant/view/screens/root_screen.dart';
 import 'package:movie_search_assistant/view/screens/search_category_screen.dart';
@@ -27,25 +27,6 @@ class RouteManager {
         name: Routes.navigationScreen,
         page: () => NavigationScreen(),
         binding: NavigationBinding()),
-      // SearchHome Tab
-      // GetPage(
-      //   name: Routes.searchHomeScreen,
-      //   page: () => SearchHomeScreen()),
-      // GetPage(
-      //   name: Routes.searchCategoryScreen,
-      //   page: () => SearchCategoryScreen(nameCollection: "")),
-      // WillWatching Tab
-      // GetPage(
-      //   name: Routes.willWatchingScreen, 
-      //   page: () => WillWatchingScreen()),
-      // MovieLibrary Tab
-      // GetPage(
-      //   name: Routes.movieLibraryScreen,
-      //   page: () => MovieLibraryScreen()),
-      // // UserProfile Tab
-      // GetPage(
-      //   name: Routes.userProfileScreen,
-      //   page: () => UserProfileScreen())
     ];
   }
 }

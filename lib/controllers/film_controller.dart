@@ -111,6 +111,7 @@ class FilmController extends GetxController {
     try {
       FilmCard filmCard = filmToFilmCard(film.value, imagesFilm.value, selectedRadioValue.value);
       await filmRepository.addFilmInStorage(filmCard);
+      log("Добавлен фильм со статусом ${filmCard.watchStatus}");
       FilmStateService.to.notifyFilmUpdated(idFilm);
     } catch (e) {
       log(e.toString());

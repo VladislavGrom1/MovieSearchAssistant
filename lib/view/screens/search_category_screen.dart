@@ -7,7 +7,7 @@ import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
-import 'package:movie_search_assistant/view/widgets/search_movie_card.dart';
+import 'package:movie_search_assistant/view/widgets/preview_film_card.dart';
 
 class SearchCategoryScreen extends GetView<SearchCategoryController>{
   SearchCategoryScreen({super.key});
@@ -62,24 +62,38 @@ class SearchCategoryScreen extends GetView<SearchCategoryController>{
     itemBuilder: (context, index) {
       
       if (controller.collectionFilms.value.items.isEmpty && controller.isLoading.value) {
-        return SearchMovieCard.fromCategory(null);
+        return PreviewFilmCard.fromCategory(null);
       }
 
-      if (index == controller.collectionFilms.value.items.length) {
+      if (index == controller.collectionFilms.value.items.length - 1) {
         if (controller.isLoading.value) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Center(child: CircularProgressIndicator()),
           );
         }
-        return Center(child: Text("Все фильмы загружены", style: CustomTextStyles.m3TitleLarge()));
+        return Column(
+          children: [
+            SizedBox(height: 10.h),
+            Divider(thickness: 4.h, color: AppColors.primaryScheme),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.warning_amber_rounded, color: AppColors.primaryScheme, size: 30.h),
+                Text("Все фильмы загружены", style: CustomTextStyles.m3BodyLarge().copyWith(fontWeight: FontWeight.w600))
+              ],
+            ),
+            SizedBox(height: 20.h),
+          ],
+        );
       }
 
       return InkWell(
         onTap: () {
           Get.toNamed(Routes.filmScreen, arguments: controller.collectionFilms.value.items[index].kinopoiskId, id: NavigatorIds.searchHome);
         },
-        child: SearchMovieCard.fromCategory(controller.collectionFilms.value.items[index])
+        child: PreviewFilmCard.fromCategory(controller.collectionFilms.value.items[index])
       );
     },
   );

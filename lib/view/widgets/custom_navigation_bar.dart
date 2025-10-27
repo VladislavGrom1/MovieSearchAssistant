@@ -15,7 +15,7 @@ class CustomNavigationBar extends StatelessWidget {
           elevation: 10,
           selectedIndex: NavigationController.to.currentIndex.value,
           onDestinationSelected: (index) => NavigationController.to.changeIndex(index),
-          labelTextStyle: WidgetStatePropertyAll(CustomTextStyles.m3BodyMedium().copyWith(fontWeight: FontWeight.w800)),
+          labelTextStyle: WidgetStatePropertyAll(CustomTextStyles.m3BodyMedium().copyWith(fontWeight: FontWeight.w600)),
           destinations: [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
@@ -39,7 +39,7 @@ class CustomNavigationBar extends StatelessWidget {
                 Icons.video_library,
                 color: Colors.white,
               ),
-              label: "Коллекция",
+              label: "Просмотрено",
             ),
             NavigationDestination(
               icon: Icon(Icons.person_2_outlined),

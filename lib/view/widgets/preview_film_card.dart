@@ -7,8 +7,8 @@ import 'package:movie_search_assistant/models/film_card.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 
-class SearchMovieCard extends StatelessWidget{
-  const SearchMovieCard({
+class PreviewFilmCard extends StatelessWidget{
+  const PreviewFilmCard({
     super.key,
     this.nameRu,
     this.nameOriginal,
@@ -28,9 +28,9 @@ class SearchMovieCard extends StatelessWidget{
   final num? year;
 
 
-  factory SearchMovieCard.fromFilters(FilmSearchByFiltersResponseItems? film){
-    if(film == null) return SearchMovieCard();
-    return SearchMovieCard(
+  factory PreviewFilmCard.fromFilters(FilmSearchByFiltersResponseItems? film){
+    if(film == null) return PreviewFilmCard();
+    return PreviewFilmCard(
       nameRu: film.nameRu,
       nameOriginal: film.nameOriginal,
       posterUrl: film.posterUrl,
@@ -41,9 +41,9 @@ class SearchMovieCard extends StatelessWidget{
     );
   }
 
-  factory SearchMovieCard.fromCategory(FilmCollectionResponseItems? film){
-    if(film == null) return SearchMovieCard();
-    return SearchMovieCard(
+  factory PreviewFilmCard.fromCategory(FilmCollectionResponseItems? film){
+    if(film == null) return PreviewFilmCard();
+    return PreviewFilmCard(
       nameRu: film.nameRu,
       nameOriginal: film.nameOriginal,
       posterUrl: film.posterUrl,
@@ -54,8 +54,8 @@ class SearchMovieCard extends StatelessWidget{
     );
   }
 
-  factory SearchMovieCard.fromStorage(FilmCard? film){
-    if(film == null) return SearchMovieCard();
+  factory PreviewFilmCard.fromStorage(FilmCard? film){
+    if(film == null) return PreviewFilmCard();
 
     BuiltList<Genre>? genresBuiltList;
     if (film.genres != null) {
@@ -71,7 +71,7 @@ class SearchMovieCard extends StatelessWidget{
       );
     }
 
-    return SearchMovieCard(
+    return PreviewFilmCard(
       nameRu: film.nameRu,
       nameOriginal: film.nameOriginal,
       posterUrl: film.posterUrl,
