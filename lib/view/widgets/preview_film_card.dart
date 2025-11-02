@@ -16,7 +16,8 @@ class PreviewFilmCard extends StatelessWidget{
     this.ratingKinopoisk,
     this.countries,
     this.genres,
-    this.year
+    this.year,
+    this.isEmpty
   });
 
   final String? nameRu;
@@ -26,6 +27,7 @@ class PreviewFilmCard extends StatelessWidget{
   final BuiltList<Country>? countries;
   final BuiltList<Genre>? genres;
   final num? year;
+  final bool? isEmpty;
 
 
   factory PreviewFilmCard.fromFilters(FilmSearchByFiltersResponseItems? film){
@@ -42,7 +44,7 @@ class PreviewFilmCard extends StatelessWidget{
   }
 
   factory PreviewFilmCard.fromCategory(FilmCollectionResponseItems? film){
-    if(film == null) return PreviewFilmCard();
+    if(film == null) return PreviewFilmCard(isEmpty: true);
     return PreviewFilmCard(
       nameRu: film.nameRu,
       nameOriginal: film.nameOriginal,
@@ -55,7 +57,7 @@ class PreviewFilmCard extends StatelessWidget{
   }
 
   factory PreviewFilmCard.fromStorage(FilmCard? film){
-    if(film == null) return PreviewFilmCard();
+    if(film == null) return PreviewFilmCard(isEmpty: true);
 
     BuiltList<Genre>? genresBuiltList;
     if (film.genres != null) {
@@ -131,32 +133,32 @@ class PreviewFilmCard extends StatelessWidget{
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(height: 5.h),
-                nameRu == null
+                isEmpty == true
                 ? Container(color: AppColors.secondaryThemeGrey)
                 : Text(
-                  nameRu!.isEmpty ? nameOriginal.toString() : nameRu.toString(), 
+                  nameRu == null ? nameOriginal.toString() : nameRu.toString(), 
                   style: CustomTextStyles.m3TitleLarge2(),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2),
                 SizedBox(height: 10.h),
-                nameOriginal == null
+                isEmpty == true
                 ? Container(color: AppColors.secondaryThemeGrey)
                 : Text(
-                  nameOriginal!.isEmpty ? "-" : nameOriginal.toString(),
+                  nameOriginal == null ? "-" : nameOriginal.toString(),
                   style: CustomTextStyles.m3BodySmall(),
                 ),
                 SizedBox(height: 10.h),
-                countries == null
+                isEmpty == true
                 ? Container(color: AppColors.secondaryThemeGrey)
                 : Text(
-                  countries!.isEmpty ? "-$year" : "${getCountriesValue(countries!)}, $year",
+                  countries!.isEmpty ? "$year" : "${getCountriesValue(countries!)}, $year",
                   style: CustomTextStyles.m3BodySmall(),
                 ),
                 SizedBox(height: 10.h),
-                genres == null
+                isEmpty == true
                 ? Container(color: AppColors.secondaryThemeGrey)
                 : Text(
-                  genres!.isEmpty ? "Нет данных" : getGenresValue(genres!),
+                  genres == null ? "Нет данных" : getGenresValue(genres!),
                   style: CustomTextStyles.m3BodySmall(),
                 )
               ]

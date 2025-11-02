@@ -41,7 +41,7 @@ class UserProfileScreen extends GetView<UserProfileController>{
                       )
                   )
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 10.h),
               ElevatedButton(
                   style: ButtonStyle(
                     minimumSize: WidgetStatePropertyAll(Size(double.infinity, 40.h)),

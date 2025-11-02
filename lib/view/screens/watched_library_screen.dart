@@ -30,37 +30,40 @@ class WatchedLibraryScreen extends GetView<WatchedLibraryController>{
       ),
       backgroundColor: AppColors.primaryThemeBlack,
       body: SafeArea(
-        child: Obx(() {
-          final films = controller.filmsWatched.value;
-
-          if (films == null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16.h),
-                  Text("Загрузка...", style: CustomTextStyles.m3BodyMedium()),
-                ],
-              ),
+        child: Padding(
+          padding: EdgeInsets.only(left: 20.w, right: 20.w),
+          child: Obx(() {
+            final films = controller.filmsWatched.value;
+          
+            if (films == null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16.h),
+                    Text("Загрузка...", style: CustomTextStyles.m3BodyMedium()),
+                  ],
+                ),
+              );
+            }
+          
+            if (films.isEmpty) {
+              return Center(
+                child: CustomAlertWidget(description: "Для сохранения фильма - измените его статус просмотра"),
+              );
+            }
+          
+            return Padding(
+                padding: EdgeInsets.only(left: 20.w, right: 20.w),
+                child: Column(
+                  children: [
+                    Flexible(child: watchedLibraryFilms()),
+                  ],
+                )
             );
           }
-
-          if (films.isEmpty) {
-            return Center(
-              child: CustomAlertWidget(description: "Для сохранения фильма - измените его статус просмотра"),
-            );
-          }
-
-          return Padding(
-              padding: EdgeInsets.only(left: 20.w, right: 20.w),
-              child: Column(
-                children: [
-                  Flexible(child: watchedLibraryFilms()),
-                ],
-              )
-          );
-        }
+          ),
         )
       )
     );

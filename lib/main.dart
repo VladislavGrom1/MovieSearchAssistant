@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/route_manager.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
-import 'package:movie_search_assistant/infrastructure/storage/storage_manager.dart';
 import 'package:movie_search_assistant/services/di_init.dart';
-import 'package:movie_search_assistant/services/film_state_service.dart';
 import 'package:movie_search_assistant/services/hive_init.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,6 +17,7 @@ Future<void> main() async {
 }
 
 // TODO: При отсутствии интернета постеры из локального хранилища не загрузятся, т.к там URL
+// TODO: Импорт/Экспорт данных
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -30,6 +29,8 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         initialRoute: Routes.rootScreen,
         getPages: RouteManager.getPages(),
+        defaultTransition: Transition.fade,
+        transitionDuration: Duration(milliseconds: 100),
         title: 'Movie Search Assistant',
         theme: ThemeData(
           scaffoldBackgroundColor: AppColors.primaryThemeBlack,

@@ -32,7 +32,7 @@ class WillWatchingNavigator extends StatelessWidget{
           );
           
         } else{
-          Get.put(WillWatchingController());
+          Get.put(WillWatchingController(), permanent: true);
           return GetPageRoute(
             settings: settings,
             page: () => WillWatchingScreen(),

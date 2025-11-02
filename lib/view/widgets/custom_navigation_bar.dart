@@ -15,7 +15,7 @@ class CustomNavigationBar extends StatelessWidget {
           elevation: 10,
           selectedIndex: NavigationController.to.currentIndex.value,
           onDestinationSelected: (index) => NavigationController.to.changeIndex(index),
-          labelTextStyle: WidgetStatePropertyAll(CustomTextStyles.m3BodyMedium().copyWith(fontWeight: FontWeight.w600)),
+          labelTextStyle: WidgetStatePropertyAll(CustomTextStyles.m3LabelMedium().copyWith(fontWeight: FontWeight.w800)),
           destinations: [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),

@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:movie_search_assistant/infrastructure/exceptions/api_exception.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 
+import 'global_network_controller.dart';
+
 class SearchFiltersController extends GetxController{
   SearchFiltersController({this.keyword, this.countries, this.genres, this.yearFrom, this.yearTo});
 
@@ -17,6 +19,7 @@ class SearchFiltersController extends GetxController{
   int? yearTo;
 
   GlobalApiService apiService = Get.find<GlobalApiService>();
+  final globalNetworkController = Get.find<GlobalNetworkController>();
 
   ScrollController scrollController = ScrollController();
 
@@ -38,36 +41,78 @@ class SearchFiltersController extends GetxController{
   );
 
   @override
-  void onInit() async{
-    scrollController.addListener(() async {
-      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+  Future<void> onInit() async {
+    scrollController.addListener(() async {_updateFilterFilms();});
+
+    ever(globalNetworkController.isConnectedToInternet, (hasInternet) async {
+      if (hasInternet && 
+          filteredKeywordFilms.value.items.isEmpty && 
+          !isLoading.value && 
+          !isErrorConnection.value) {
+        await resetAndReload();
+      }
+    });
+
+    if (globalNetworkController.isConnectedToInternet.value) {
+      await getFilterFilms();
+    } else {
+      isLoading.value = false;
+    }
+    super.onInit();
+  }
+
+  Future<void> _updateFilterFilms() async{
+    if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
         if(!allPagesLoaded){
           await getFilterFilms();
         }
       }
-    });
-    await getFilterFilms();
-    super.onInit();
+  }
+
+  Future<void> resetAndReload() async{
+    currentPage.value = 1;
+    totalPages.value = null;
+    isFetchingNextPage = false;
+    allPagesLoaded = false;
+    isErrorConnection.value = false;
+    
+    filteredKeywordFilms = Rx<FilmSearchByFiltersResponse>(
+      FilmSearchByFiltersResponse((b) => b
+      ..total = 0
+      ..totalPages = 0
+      ..items = ListBuilder<FilmSearchByFiltersResponseItems>([])
+      ),
+    );
+
+    clearListener();
+    scrollController.addListener(() async {_updateFilterFilms();});
+    if (globalNetworkController.isConnectedToInternet.value) {
+      await getFilterFilms();
+    }
+  }
+
+  void clearListener(){
+    scrollController.removeListener(_updateFilterFilms);
   }
 
   Future<void> getFilterFilms() async{
-
-    isErrorConnection.value = false;
+    if (!globalNetworkController.isConnectedToInternet.value) {
+      isLoading.value = false;
+      isFetchingNextPage = false;
+      return;
+    }
 
     if (isFetchingNextPage) {
       return;
     }
-
     if (totalPages.value != null && currentPage.value > totalPages.value!) {
       allPagesLoaded = true;
       return;
     }
-
     isFetchingNextPage = true;
     isLoading.value = true;
 
     try{
-
       FilmSearchByFiltersResponse responseData = await apiService.getFilterFilms(
         keyword, 
         countries,

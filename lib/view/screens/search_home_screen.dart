@@ -23,16 +23,23 @@ class SearchHomeScreen extends GetView<SearchHomeController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  SizedBox(height: 10.h),
                   CustomSearchBar(
                       textEditingController:
                           controller.searchTextEditingController),
                   SizedBox(height: 13.h),
                   Expanded(
                     child: RefreshIndicator(
+                      backgroundColor: AppColors.secondaryThemeGrey,
+                      color: AppColors.primaryTextWhite,
                       onRefresh: () async {
                         await controller.getAllCollectionsFilms();
                       },
                       child: Obx(() {
+                        if(!controller.globalNetworkController.isConnectedToInternet.value){
+                          return CustomErrorWidget(statusCode: 0);
+                        }
+
                         if(controller.isErrorConnection.value){
                           return CustomErrorWidget(statusCode: controller.statusCode.value);
                         }
@@ -40,12 +47,13 @@ class SearchHomeScreen extends GetView<SearchHomeController> {
                         if (controller.isLoading.value) {
                           return Center(child: CircularProgressIndicator());
                         }
-                        else{
-                          return ListView.separated(
-                            itemBuilder: (context, index) => categoryFilms(controller.collectionNames[index]), 
-                            separatorBuilder: (context, index) => SizedBox(height: 16.h), 
-                            itemCount: controller.collectionNames.length);
-                        }
+
+                        return ListView.separated(
+                          itemBuilder: (context, index) => categoryFilms(controller.collectionNames[index]), 
+                          separatorBuilder: (context, index) => SizedBox(height: 16.h), 
+                          itemCount: controller.collectionNames.length
+                        );
+                        
                       }
                     )
                   ),

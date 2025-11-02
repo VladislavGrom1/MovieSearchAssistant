@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/controllers/global_network_controller.dart';
 import 'package:movie_search_assistant/repositories/user_repository.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 
@@ -10,6 +11,7 @@ class LoginController extends GetxController{
   final apiService = Get.find<GlobalApiService>();
 
   TextEditingController textEditingController = TextEditingController();
+  final globalNetworkController = Get.find<GlobalNetworkController>();
 
   Future<bool> entryApiKey() async{
     try{

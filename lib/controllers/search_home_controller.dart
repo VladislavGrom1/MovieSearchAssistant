@@ -3,6 +3,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:generated/generated.dart';
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/controllers/global_network_controller.dart';
 import 'package:movie_search_assistant/controllers/navigation_controller.dart';
 import 'package:movie_search_assistant/infrastructure/exceptions/api_exception.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
@@ -10,11 +11,11 @@ import 'package:movie_search_assistant/services/global_api_service.dart';
 class SearchHomeController extends GetxController{
 
   GlobalApiService apiService = Get.find<GlobalApiService>();
+  final globalNetworkController = Get.find<GlobalNetworkController>();
 
   TextEditingController searchTextEditingController = TextEditingController();
 
   var isLoading = false.obs;
-  
   var isErrorConnection = false.obs;
   var statusCode = 0.obs;
 
@@ -23,7 +24,21 @@ class SearchHomeController extends GetxController{
 
   @override
   void onInit() async{
-    await getAllCollectionsFilms();
+    
+    ever(globalNetworkController.isConnectedToInternet, (hasInternet) {
+      if (hasInternet && 
+          collectionsFilms.isEmpty && 
+          !isLoading.value && 
+          !isErrorConnection.value) {
+        getAllCollectionsFilms();
+      }
+    });
+
+    if (globalNetworkController.isConnectedToInternet.value) {
+      await getAllCollectionsFilms();
+    } else {
+      isLoading.value = false;
+    }
 
     ever(NavigationController.to.currentIndex, (index) {
       if (index == 0) {
@@ -55,7 +70,9 @@ class SearchHomeController extends GetxController{
         isErrorConnection.value = true;
         statusCode.value = 402;
       }
+      isErrorConnection.value = true;
     } catch(e){
+      isErrorConnection.value = true;
       log(e.toString());
     } finally{
       isLoading.value = false;

@@ -82,7 +82,7 @@ class SwitchFiltersScreen extends GetView<SwitchFiltersController>{
                         }, 
                       id: NavigatorIds.searchHome);
                 }, 
-                child: Text("Показать", style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryTextWhite)),
+                child: Text("Показать", style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryTextWhite).copyWith(fontWeight: FontWeight.w800)),
                 ),
               ),
               Padding(
@@ -96,7 +96,7 @@ class SwitchFiltersScreen extends GetView<SwitchFiltersController>{
                   onPressed: () {
                     controller.resetFilters();
                 }, 
-                child: Text("Сбросить поиск", style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryTextWhite)),
+                child: Text("Сбросить поиск", style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryTextWhite).copyWith(fontWeight: FontWeight.w800)),
                 ),
               )
             ]

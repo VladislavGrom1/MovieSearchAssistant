@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:movie_search_assistant/controllers/global_network_controller.dart';
 import 'package:movie_search_assistant/controllers/login_controller.dart'; 
 import 'package:movie_search_assistant/controllers/root_controller.dart';
 import 'package:movie_search_assistant/infrastructure/storage/film_storage.dart';
@@ -10,6 +11,7 @@ import 'package:movie_search_assistant/services/global_api_service.dart';
 
 class DiInit {
   static void init(){
+    Get.put(GlobalNetworkController(), permanent: true);
     Get.put(UserStorage());
     Get.put(UserRepository());
     Get.put(FilmStorage());

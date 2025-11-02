@@ -32,6 +32,9 @@ class CustomErrorWidget extends StatelessWidget {
       "description": "Неизвестная ошибка"
     };
     switch (statusCode) {
+      case (0):
+        message["description"] = "Отсутствует подключение к интернету";
+        return message;
       case (401):
         message["description"] = "Ваш API Token некорректный. Проверьте корректность введённого API Token на вкладке Профиль";
         return message;

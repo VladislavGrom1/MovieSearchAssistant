@@ -30,7 +30,7 @@ class WatchedLibraryNavigator extends StatelessWidget{
             page: () => FilmScreen(idFilm: idFilm, navId: NavigatorIds.watchedLibrary)
           );
         } else{
-          Get.put(WatchedLibraryController());
+          Get.put(WatchedLibraryController(), permanent: true);
           return GetPageRoute(
             settings: settings,
             page: () => WatchedLibraryScreen(),

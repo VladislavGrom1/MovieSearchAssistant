@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,10 @@ import 'package:movie_search_assistant/controllers/login_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/view/widgets/custom_snack_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+// TODO: Когда открывается клавиатура UI выходит за границы
 
 class LoginScreen extends GetView<LoginController> {
   @override
@@ -28,12 +33,35 @@ class LoginScreen extends GetView<LoginController> {
                             color: AppColors.primaryScheme))),
                 SizedBox(height: 60.h),
                 Center(
-                    child: Text(
-                        "Для использования возможностей приложения Вам потребуется зарегистрироваться на сайте kinopoiskapiunofficial.",
-                        style: CustomTextStyles.m3BodyLarge(
-                                color: AppColors.primaryTextGrey)
-                            .copyWith(fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.center)),
+                  child: Text.rich(
+                    TextSpan(
+                      style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryTextGrey)
+                          .copyWith(fontWeight: FontWeight.w600),
+                      children: [
+                        TextSpan(text: "Для использования возможностей приложения Вам потребуется зарегистрироваться на сайте "),
+                        TextSpan(
+                          text: "kinopoiskapiunofficial.tech",
+                          style: CustomTextStyles.m3BodyLarge(color: AppColors.primaryScheme)
+                              .copyWith(fontWeight: FontWeight.w600, decoration: TextDecoration.underline),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              try{
+                                launchUrl(
+                                  Uri.parse('https://kinopoiskapiunofficial.tech/?ysclid=mhhq2ui52t844352392'),
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              } catch(e){
+                                log(e.toString());
+                                CustomSnackBar.showError(title: "Ошибка", message: "Не удалось совершить переход по ссылке");
+                              }
+                            },
+                        ),
+                        TextSpan(text: "."),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 SizedBox(height: 20.h),
                 Center(
                     child: Text(
@@ -80,57 +108,22 @@ class LoginScreen extends GetView<LoginController> {
                   onPressed: () async {
                     final apiKey = controller.textEditingController.text.trim();
 
+                    if (!controller.globalNetworkController.isConnectedToInternet.value){
+                        CustomSnackBar.showError(title: "Ошибка", message: "Пожалуйста, проверьте интернет соединение");
+                        return;
+                      }
+
                     if (apiKey.isEmpty) {
-                      Get.snackbar(
-                        "",
-                        "",
-                        titleText: Text("Ошибка",
-                            style: CustomTextStyles.m3BodyLarge(
-                                    color: AppColors.primaryThemeBlack)
-                                .copyWith(
-                                    fontWeight: FontWeight.w800, height: 1.3)),
-                        messageText: Text("Пожалуйста, введите API Key",
-                            style: CustomTextStyles.m3BodyLarge(
-                                    color: AppColors.primaryThemeBlack)
-                                .copyWith(
-                                    fontWeight: FontWeight.w400, height: 1.3)),
-                        icon: Icon(Icons.error,
-                            color: AppColors.primaryThemeBlack),
-                        snackPosition: SnackPosition.TOP,
-                        backgroundColor: AppColors.primaryScheme,
-                        colorText: AppColors.primaryThemeBlack,
-                      );
+                      CustomSnackBar.showError(title: "Ошибка", message: "Пожалуйста, введите API Key");
                       return;
                     }
 
                     try {
                       bool apiKeyIsValid = await controller.entryApiKey();
-
                       if (apiKeyIsValid) {
                         Get.offAllNamed(Routes.navigationScreen);
-                      } else {
-                        Get.snackbar(
-                          "",
-                          "",
-                          titleText: Text("Ошибка",
-                              style: CustomTextStyles.m3BodyLarge(
-                                      color: AppColors.primaryThemeBlack)
-                                  .copyWith(
-                                      fontWeight: FontWeight.w800,
-                                      height: 1.3)),
-                          messageText: Text(
-                              "Пожалуйста, проверьте корректность API Key",
-                              style: CustomTextStyles.m3BodyLarge(
-                                      color: AppColors.primaryThemeBlack)
-                                  .copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.3)),
-                          icon: Icon(Icons.error,
-                              color: AppColors.primaryThemeBlack),
-                          snackPosition: SnackPosition.TOP,
-                          backgroundColor: AppColors.primaryScheme,
-                          colorText: AppColors.primaryThemeBlack,
-                        );
+                      } else if (!controller.globalNetworkController.isConnectedToInternet.value){
+                        CustomSnackBar.showError(title: "Ошибка", message: "Пожалуйста, проверьте корректность API Key");
                         return;
                       }
                     } catch (e) {
@@ -140,15 +133,7 @@ class LoginScreen extends GetView<LoginController> {
                   child: Text("Проверить API Key",
                       style: CustomTextStyles.m3TitleMedium(color: AppColors.primaryTextWhite).copyWith(fontWeight: FontWeight.w800)),
                 ),
-                SizedBox(height: 20.h),
-                Center(
-                    child: Text(
-                        "Вы можете ввести API Key позднее на вкладке Профиль в Movie Search Assistant",
-                        style: CustomTextStyles.m3BodyLarge(
-                                color: AppColors.primaryTextGrey)
-                            .copyWith(fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.center)),
-                SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
                 ElevatedButton(
                   style: ButtonStyle(
                       minimumSize:

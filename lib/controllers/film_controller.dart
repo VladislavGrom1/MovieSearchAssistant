@@ -5,6 +5,7 @@ import 'package:generated/generated.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
 import 'package:movie_search_assistant/constants/watch_statuses.dart';
+import 'package:movie_search_assistant/controllers/global_network_controller.dart';
 import 'package:movie_search_assistant/controllers/navigation_controller.dart';
 import 'package:movie_search_assistant/infrastructure/exceptions/api_exception.dart';
 import 'package:movie_search_assistant/models/film_card.dart';
@@ -12,6 +13,8 @@ import 'package:movie_search_assistant/repositories/film_repository.dart';
 import 'package:movie_search_assistant/services/film_state_service.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+// TODO: Реализовать пордгрузку из локального хранилища
 
 class FilmController extends GetxController {
   FilmController({
@@ -24,6 +27,7 @@ class FilmController extends GetxController {
 
   GlobalApiService apiService = Get.find<GlobalApiService>();
   FilmRepository filmRepository = Get.find<FilmRepository>();
+  final globalNetworkController = Get.find<GlobalNetworkController>();
 
   var film = (null as Film?).obs;
   var imagesFilm = (null as ImageResponse?).obs;
@@ -38,14 +42,38 @@ class FilmController extends GetxController {
 
   @override
   void onInit() async {
-    await getIdFilm();
-    await getFilmWatchStatus();
+    
+    ever(globalNetworkController.isConnectedToInternet, (hasInternet) async {
+      if (hasInternet && 
+          film.value == null && 
+          !isLoading.value && 
+          !isErrorConnection.value) {
+        await getIdFilm();
+        await getFilmWatchStatus();
+      }
+    });
+
+    if (globalNetworkController.isConnectedToInternet.value) {
+      await getIdFilm();
+      await getFilmWatchStatus();
+    } else {
+      isLoading.value = false;
+    }
+
     ever(FilmStateService.to.updatedFilmIds, (Set<int> updatedIds) {
       if (updatedIds.contains(idFilm)) {
         _refreshFilmStatus();
       }
     });
+
     super.onInit();
+  }
+
+  Future<void> resetAndReload() async{
+    if (globalNetworkController.isConnectedToInternet.value) {
+      await getIdFilm();
+      await getFilmWatchStatus();
+    }
   }
 
   Future<void> _refreshFilmStatus() async {

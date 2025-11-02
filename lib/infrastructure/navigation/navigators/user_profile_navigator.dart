@@ -28,12 +28,7 @@ class UserProfileNavigator extends StatelessWidget{
             page: () => ChangeApiKeyScreen(),
           );
         } else{
-
-          if (Get.isRegistered<UserProfileController>()) {
-            Get.delete<UserProfileController>();
-          }
-
-          Get.put(UserProfileController());
+          Get.put(UserProfileController(), permanent: true);
           return GetPageRoute(
             settings: settings,
             page: () => UserProfileScreen(),

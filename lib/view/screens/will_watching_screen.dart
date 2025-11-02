@@ -34,37 +34,40 @@ class WillWatchingScreen extends GetView<WillWatchingController>{
       ),
       backgroundColor: AppColors.primaryThemeBlack,
       body: SafeArea(
-        child: Obx(() {
-          final films = controller.filmsWillWatch.value;
-
-          if (films == null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16.h),
-                  Text("Загрузка...", style: CustomTextStyles.m3BodyMedium()),
-                ],
-              ),
+        child: Padding(
+          padding: EdgeInsets.only(left: 20.w, right: 20.w),
+          child: Obx(() {
+            final films = controller.filmsWillWatch.value;
+          
+            if (films == null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16.h),
+                    Text("Загрузка...", style: CustomTextStyles.m3BodyMedium()),
+                  ],
+                ),
+              );
+            }
+          
+            if (films.isEmpty) {
+              return Center(
+                child: CustomAlertWidget(description: "Для сохранения фильма - измените его статус просмотра"),
+              );
+            }
+          
+            return Padding(
+                padding: EdgeInsets.only(left: 20.w, right: 20.w),
+                child: Column(
+                  children: [
+                    Flexible(child: willWatchCollectionFilms()),
+                  ],
+                )
             );
           }
-
-          if (films.isEmpty) {
-            return Center(
-              child: CustomAlertWidget(description: "Для сохранения фильма - измените его статус просмотра"),
-            );
-          }
-
-          return Padding(
-              padding: EdgeInsets.only(left: 20.w, right: 20.w),
-              child: Column(
-                children: [
-                  Flexible(child: willWatchCollectionFilms()),
-                ],
-              )
-          );
-        }
+          ),
         )
       )
     );

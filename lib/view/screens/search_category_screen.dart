@@ -18,6 +18,12 @@ class SearchCategoryScreen extends GetView<SearchCategoryController>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.primaryScheme,
+        child: Icon(Icons.home, color:  AppColors.primaryTextWhite),
+        onPressed: () {
+          Get.offAndToNamed(Routes.searchHomeScreen, id: NavigatorIds.searchHome);
+      }),
       appBar: AppBar(
         backgroundColor: AppColors.primaryThemeBlack,
         iconTheme: IconThemeData(
@@ -28,86 +34,164 @@ class SearchCategoryScreen extends GetView<SearchCategoryController>{
       ),
       backgroundColor: AppColors.primaryThemeBlack,
       body: SafeArea(
-        child: Obx(() {
-          if(controller.isErrorConnection.value){
-            return CustomErrorWidget(statusCode: controller.statusCode.value);
-          }
+        child: Column(
+          children: [
+            Expanded(
+              child: RefreshIndicator(
+                backgroundColor: AppColors.secondaryThemeGrey,
+                color: AppColors.primaryTextWhite,
+                onRefresh: () async {
+                  await controller.resetAndReload();
+                },
+                child: Obx(() {
 
-          return PageStorage(
-          bucket: _bucket, 
-          child: Padding(
-              padding: EdgeInsets.only(left: 20.w, right: 20.w),
-              child: Column(
-                children: [
-                  Flexible(child: categoryFilms()),
-                ],
-              )
-          ),
-          );
-
-        } 
+                  if(!controller.globalNetworkController.isConnectedToInternet.value){
+                        return CustomErrorWidget(statusCode: 0);
+                  }
+                  
+                  if(controller.isErrorConnection.value){
+                    return CustomErrorWidget(statusCode: controller.statusCode.value);
+                  }
+                  
+                  return PageStorage(
+                    bucket: _bucket, 
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 20.w, right: 20.w),
+                      child: categoryFilms(),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget categoryFilms() {
-  return ListView.separated(
-    key: _listViewKey,
-    controller: controller.scrollController,
-    itemCount: controller.collectionFilms.value.items.isEmpty && controller.isLoading.value
-        ? 10
-        : controller.collectionFilms.value.items.length + (controller.isLoading.value ? 1 : 0),
-    separatorBuilder: (context, index) => SizedBox(height: 12.h),
-    itemBuilder: (context, index) {
-      
-      if (controller.collectionFilms.value.items.isEmpty && controller.isLoading.value) {
-        return PreviewFilmCard.fromCategory(null);
-      }
+    return ListView.separated(
+      key: _listViewKey,
+      controller: controller.scrollController,
+      itemCount: _calculateItemCount(),
+      physics: const AlwaysScrollableScrollPhysics(),
+      separatorBuilder: (context, index) => SizedBox(height: 12.h),
+      itemBuilder: (context, index) {
+        return _buildListItem(context, index);
+      },
+    );
+  }
 
-      if (index == controller.collectionFilms.value.items.length - 1) {
-        if (controller.isLoading.value) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-        return Column(
-          children: [
-            SizedBox(height: 10.h),
-            Divider(thickness: 4.h, color: AppColors.primaryScheme),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.warning_amber_rounded, color: AppColors.primaryScheme, size: 30.h),
-                Text("Все фильмы загружены", style: CustomTextStyles.m3BodyLarge().copyWith(fontWeight: FontWeight.w600))
-              ],
-            ),
-            SizedBox(height: 20.h),
-          ],
+  int _calculateItemCount(){
+    final items = controller.collectionFilms.value.items;
+    final isLoading = controller.isLoading.value;
+    if (items.isEmpty && isLoading) {
+      return 10;
+    }
+    if (items.isEmpty) {
+      return 1;
+    }
+    return items.length + 1;
+  }
+
+  Widget _buildListItem(BuildContext context, int index) {
+    final items = controller.collectionFilms.value.items;
+    
+    if (items.isEmpty && controller.isLoading.value) {
+      return PreviewFilmCard.fromCategory(null);
+    }
+    
+    if (items.isEmpty) {
+      return _buildNoFilmsMessage();
+    }
+
+    if (index >= items.length) {
+      return _buildBottomWidget();
+    }
+    
+    // Обычная карточка фильма
+    return InkWell(
+      onTap: () {
+        Get.toNamed(
+          Routes.filmScreen, 
+          arguments: items[index].kinopoiskId, 
+          id: NavigatorIds.searchHome
         );
-      }
+      },
+      child: PreviewFilmCard.fromCategory(items[index])
+    );
+  }
 
-      return InkWell(
-        onTap: () {
-          Get.toNamed(Routes.filmScreen, arguments: controller.collectionFilms.value.items[index].kinopoiskId, id: NavigatorIds.searchHome);
-        },
-        child: PreviewFilmCard.fromCategory(controller.collectionFilms.value.items[index])
+  Widget _buildNoFilmsMessage() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 50.h),
+        child: Column(
+          children: [
+            Icon(Icons.movie_filter_rounded, 
+                 color: AppColors.primaryScheme, 
+                 size: 60.h),
+            SizedBox(height: 16.h),
+            Text("Фильмы не найдены", 
+                 style: CustomTextStyles.m3BodyLarge().copyWith(
+                   fontWeight: FontWeight.w600,
+                   color: AppColors.primaryTextGrey
+                 )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomWidget() {
+    if (controller.isLoading.value) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 16.h),
+        child: Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primaryScheme,
+          ),
+        ),
       );
-    },
-  );
-}
-  
+    }
+    
+    return Column(
+      children: [
+        SizedBox(height: 10.h),
+        Divider(thickness: 2.h, color: AppColors.primaryScheme),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 16.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.check_circle_rounded, 
+                   color: AppColors.primaryScheme, 
+                   size: 24.h),
+              SizedBox(width: 8.w),
+              Text("Все фильмы загружены", 
+                   style: CustomTextStyles.m3BodyMedium().copyWith(
+                     fontWeight: FontWeight.w500,
+                     color: AppColors.primaryTextGrey
+                   )),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
-  String switchNameCollection(String collectionName){
-    String titleCollection;
-    switch(collectionName){
-      case("TOP_POPULAR_MOVIES"): titleCollection = "Популярные фильмы"; return titleCollection;
-      case("POPULAR_SERIES"): titleCollection = "Популярные сериалы"; return titleCollection;
-      case("TOP_250_MOVIES"): titleCollection = "Топ 250: фильмы"; return titleCollection;
-      case("TOP_250_TV_SHOWS"): titleCollection = "Топ 250: сериалы"; return titleCollection;
-      default: titleCollection = "Категория не найдена"; return titleCollection;
+  String switchNameCollection(String collectionName) {
+    switch(collectionName) {
+      case "TOP_POPULAR_MOVIES": 
+        return "Популярные фильмы";
+      case "POPULAR_SERIES": 
+        return "Популярные сериалы";
+      case "TOP_250_MOVIES": 
+        return "Топ 250: фильмы";
+      case "TOP_250_TV_SHOWS": 
+        return "Топ 250: сериалы";
+      default: 
+        return "Категория не найдена";
     }
   }
-} 
+}

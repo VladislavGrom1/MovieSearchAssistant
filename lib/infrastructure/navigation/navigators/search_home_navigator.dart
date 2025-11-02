@@ -115,7 +115,7 @@ class SearchHomeNavigator extends StatelessWidget{
             page: () => SearchCategoryScreen(),
           );
         } else{
-          Get.put(SearchHomeController());
+          Get.put(SearchHomeController(), permanent: true);
           return GetPageRoute(
             settings: settings, 
             page: () => SearchHomeScreen(),
