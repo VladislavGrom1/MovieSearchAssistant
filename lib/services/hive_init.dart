@@ -12,6 +12,7 @@ class HiveInit {
     Hive.registerAdapter(UserApiKeyInfoAdapter());
     Hive.registerAdapter(FilmCardAdapter());
 
+    //await Hive.deleteBoxFromDisk(HiveStorageKeys.userFilmsKeyBox);
     await Hive.openBox<UserApiKeyInfo>(HiveStorageKeys.userApiKeyBox);
     await Hive.openBox<FilmCard>(HiveStorageKeys.userFilmsKeyBox);
   }

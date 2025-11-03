@@ -101,4 +101,19 @@ class FilmRepository extends GetxController{
     }
     return null;
   }
+
+  Future<bool> filmIsExistInStorage(int kinopoiskId) async{
+    try{
+      FilmCard? film = await getFilmFromStorage(kinopoiskId);
+      if(film != null){
+        return true;
+      }
+    } on StorageException catch(e){
+      log(e.message);
+    } catch(e){
+      log(e.toString());
+      rethrow;
+    }
+    return false;
+  }
 }

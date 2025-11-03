@@ -30,9 +30,7 @@ class WatchedLibraryScreen extends GetView<WatchedLibraryController>{
       ),
       backgroundColor: AppColors.primaryThemeBlack,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(left: 20.w, right: 20.w),
-          child: Obx(() {
+        child: Obx(() {
             final films = controller.filmsWatched.value;
           
             if (films == null) {
@@ -64,7 +62,6 @@ class WatchedLibraryScreen extends GetView<WatchedLibraryController>{
             );
           }
           ),
-        )
       )
     );
   }

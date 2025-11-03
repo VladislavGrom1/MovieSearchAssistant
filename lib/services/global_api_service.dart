@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
@@ -143,16 +144,38 @@ class GlobalApiService extends GetxController{
     }
   }
 
-  Future<ImageResponse> getImagesIdFilm(int idFilm) async{
+  Future<Uint8List?> downloadImageAsBytes(String imageUrl) async {
+  try {
+    Response<List<int>> response = await Dio().get<List<int>>(
+      imageUrl,
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: true,
+        receiveTimeout: const Duration(seconds: 10),
+      ),
+    );
+    if (response.data != null) {
+      return Uint8List.fromList(response.data!);
+    }
+    return null;
+  } on DioException catch(e){
+    throw ApiException(e.message.toString(), e.response?.statusCode);
+  }
+}
+
+  Future<ImageResponse?> getImagesIdFilm(int idFilm) async{
     try{
       String? apikey = await getUserApiKey();
-      Response<ImageResponse> responseData = await filmsApi.apiV22FilmsIdImagesGet(
+      Response<ImageResponse?> responseData = await filmsApi.apiV22FilmsIdImagesGet(
         id: idFilm,
         type: "STILL",
         page: 1,
         headers: {"X-API-KEY": apikey}
       );
-      return responseData.data!;
+      if (responseData.data != null) {
+        return responseData.data;
+      }
+      return null;
     } on DioException catch(e){
       throw ApiException(e.message.toString(), e.response?.statusCode);
     }

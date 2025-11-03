@@ -21,27 +21,30 @@ class FilmCardAdapter extends TypeAdapter<FilmCard> {
       nameRu: fields[1] as String?,
       nameOriginal: fields[2] as String?,
       posterUrl: fields[3] as String?,
-      ratingKinopoisk: fields[4] as double?,
-      ratingKinopoiskVoteCount: fields[5] as int?,
-      ratingImdb: fields[6] as double?,
-      ratingImdbVoteCount: fields[7] as int?,
-      countries: (fields[8] as List?)?.cast<String>(),
-      genres: (fields[9] as List?)?.cast<String>(),
-      imagesFilm: (fields[10] as List?)?.cast<String>(),
-      year: fields[11] as int?,
-      startYear: fields[12] as int?,
-      endYear: fields[13] as int?,
-      serial: fields[14] as bool?,
-      description: fields[15] as String?,
-      slogan: fields[16] as String?,
-      watchStatus: fields[17] as String?,
+      posterBytes: fields[4] as Uint8List?,
+      ratingKinopoisk: fields[5] as double?,
+      ratingKinopoiskVoteCount: fields[6] as int?,
+      ratingImdb: fields[7] as double?,
+      ratingImdbVoteCount: fields[8] as int?,
+      countries: (fields[9] as List?)?.cast<String>(),
+      genres: (fields[10] as List?)?.cast<String>(),
+      imagesFilm: (fields[11] as List?)?.cast<String>(),
+      imagesFilmBytes: (fields[12] as List?)?.cast<Uint8List?>(),
+      year: fields[13] as int?,
+      startYear: fields[14] as int?,
+      endYear: fields[15] as int?,
+      serial: fields[16] as bool?,
+      description: fields[17] as String?,
+      slogan: fields[18] as String?,
+      watchStatus: fields[19] as String?,
+      webUrl: fields[20] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, FilmCard obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(21)
       ..writeByte(0)
       ..write(obj.kinopoiskId)
       ..writeByte(1)
@@ -51,33 +54,39 @@ class FilmCardAdapter extends TypeAdapter<FilmCard> {
       ..writeByte(3)
       ..write(obj.posterUrl)
       ..writeByte(4)
-      ..write(obj.ratingKinopoisk)
+      ..write(obj.posterBytes)
       ..writeByte(5)
-      ..write(obj.ratingKinopoiskVoteCount)
+      ..write(obj.ratingKinopoisk)
       ..writeByte(6)
-      ..write(obj.ratingImdb)
+      ..write(obj.ratingKinopoiskVoteCount)
       ..writeByte(7)
-      ..write(obj.ratingImdbVoteCount)
+      ..write(obj.ratingImdb)
       ..writeByte(8)
-      ..write(obj.countries)
+      ..write(obj.ratingImdbVoteCount)
       ..writeByte(9)
-      ..write(obj.genres)
+      ..write(obj.countries)
       ..writeByte(10)
-      ..write(obj.imagesFilm)
+      ..write(obj.genres)
       ..writeByte(11)
-      ..write(obj.year)
+      ..write(obj.imagesFilm)
       ..writeByte(12)
-      ..write(obj.startYear)
+      ..write(obj.imagesFilmBytes)
       ..writeByte(13)
-      ..write(obj.endYear)
+      ..write(obj.year)
       ..writeByte(14)
-      ..write(obj.serial)
+      ..write(obj.startYear)
       ..writeByte(15)
-      ..write(obj.description)
+      ..write(obj.endYear)
       ..writeByte(16)
-      ..write(obj.slogan)
+      ..write(obj.serial)
       ..writeByte(17)
-      ..write(obj.watchStatus);
+      ..write(obj.description)
+      ..writeByte(18)
+      ..write(obj.slogan)
+      ..writeByte(19)
+      ..write(obj.watchStatus)
+      ..writeByte(20)
+      ..write(obj.webUrl);
   }
 
   @override

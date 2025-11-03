@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/route_manager.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
+import 'package:movie_search_assistant/infrastructure/storage/storage_manager.dart';
 import 'package:movie_search_assistant/services/di_init.dart';
 import 'package:movie_search_assistant/services/hive_init.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
@@ -16,7 +17,6 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-// TODO: При отсутствии интернета постеры из локального хранилища не загрузятся, т.к там URL
 // TODO: Импорт/Экспорт данных
 
 class MyApp extends StatelessWidget {

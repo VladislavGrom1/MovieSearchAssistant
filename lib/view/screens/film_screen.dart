@@ -29,16 +29,14 @@ class FilmScreen extends StatelessWidget {
     final controller = Get.find<FilmController>(tag: tag);
 
     return Scaffold(
-      body: Expanded(
-        child: RefreshIndicator(
+      body: RefreshIndicator(
           backgroundColor: AppColors.secondaryThemeGrey,
           color: AppColors.primaryTextWhite,
           onRefresh: () async {
-            
+            await controller.resetAndReload();
           },
           child: Obx(() {
-          
-          if (!controller.globalNetworkController.isConnectedToInternet.value){
+          if (!controller.globalNetworkController.isConnectedToInternet.value && controller.filmCard.value == null){
             return Column(
               children: [
                 AppBar(
@@ -153,13 +151,13 @@ class FilmScreen extends StatelessWidget {
                                                     groupValue: controller.selectedRadioValue.value,
                                                     onChanged: (value) async {
                                                       controller.updateSelectionRadioValue(value);
+                                                      Get.back();
                                                       if(value == WatchStatuses.DONT_WATCH){
                                                         await controller.removeFilmFromCategory();
                                                       }
                                                       else{
                                                         await controller.saveFilmInCollection();
                                                       }
-                                                      Get.back();
                                                     },
                                                     child: Column(
                                                       children: [
@@ -254,7 +252,8 @@ class FilmScreen extends StatelessWidget {
                                 controller.film.value?.ratingImdb,
                                 controller.film.value?.ratingImdbVoteCount),
                             SizedBox(height: 20.h),
-                            controller.imagesFilm.value == null
+                            // TODO: При этом условии выводятся пустые контейнеры, т.к. imagesFilm.value.items.isEmpty
+                            controller.imagesFilm.value?.items == null && controller.filmCard.value?.imagesFilmBytes == null
                             ? Center(child: Text("Не удалось загрузить изображения", style: CustomTextStyles.m3BodyLarge()
                     .copyWith(fontWeight: FontWeight.w800, height: 1.3)))
                             : filmImages(controller)
@@ -267,10 +266,33 @@ class FilmScreen extends StatelessWidget {
           }
               }),
         ),
-      ));
+      );
   }
 
   Widget backgroundAppBarWidget(FilmController controller) {
+    Widget backgroundWidget;
+
+    if (controller.filmCard.value?.posterBytes != null) {
+      backgroundWidget = Image.memory(
+        controller.filmCard.value!.posterBytes!,
+        fit: BoxFit.cover,
+        );
+    } else if (controller.film.value?.posterUrl != null) {
+      backgroundWidget = CachedNetworkImage(
+        imageUrl: controller.film.value?.posterUrl ?? "",
+        fit: BoxFit.cover,
+        placeholder: (content, url) => Container(color: AppColors.primaryTextGrey),
+        errorWidget: (context, error, stackTrace) {
+          return Container(
+            color: AppColors.secondaryThemeGrey,
+            child: Icon(Icons.error, color: AppColors.primaryTextGrey),
+          );
+        },
+        );
+    } else {
+      backgroundWidget = Container(color: AppColors.primaryTextGrey);
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final double currentHeight = constraints.biggest.height;
@@ -282,18 +304,7 @@ class FilmScreen extends StatelessWidget {
           children: [
             FlexibleSpaceBar(
               collapseMode: CollapseMode.parallax,
-              background: CachedNetworkImage(
-                imageUrl: controller.film.value?.posterUrl ?? "",
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    Container(color: AppColors.primaryTextGrey),
-                errorWidget: (context, error, stackTrace) {
-                  return Container(
-                    color: AppColors.secondaryThemeGrey,
-                    child: Icon(Icons.error, color: AppColors.primaryTextGrey),
-                  );
-                },
-              ),
+              background: backgroundWidget
             ),
             if (isCollapsed)
               Positioned(
@@ -503,9 +514,9 @@ class FilmScreen extends StatelessWidget {
             height: 200.h,
             child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemCount: controller.imagesFilm.value?.items == null
-                    ? 0
-                    : controller.imagesFilm.value!.items.length,
+                itemCount: controller.imagesFilm.value == null 
+                ? controller.filmCard.value!.imagesFilmBytes!.length
+                : controller.imagesFilm.value!.items.length,
                 separatorBuilder: (context, index) => SizedBox(width: 12.w),
                 itemBuilder: (context, index) => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -520,10 +531,8 @@ class FilmScreen extends StatelessWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(16.w),
-                                child: controller.imagesFilm.value == null
-                                    ? Container(
-                                        color: AppColors.primaryTextGrey)
-                                    : SizedBox.expand(
+                                child: controller.filmCard.value?.imagesFilmBytes == null
+                                    ? SizedBox.expand(
                                         child: CachedNetworkImage(
                                           imageUrl: controller.imagesFilm.value!
                                               .items[index].imageUrl!,
@@ -540,7 +549,13 @@ class FilmScreen extends StatelessWidget {
                                           filterQuality: FilterQuality.medium,
                                           fit: BoxFit.cover,
                                         ),
-                                      ),
+                                      )
+                                    : SizedBox.expand(
+                                        child: Image.memory(
+                                          controller.filmCard.value!.imagesFilmBytes![index]!,
+                                          fit: BoxFit.cover,
+                                      )
+                                  ),
                               ),
                             ],
                           ),

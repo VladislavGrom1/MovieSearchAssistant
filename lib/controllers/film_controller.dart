@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:typed_data';
 import 'package:built_collection/built_collection.dart';
 import 'package:generated/generated.dart';
 import 'package:get/get.dart';
@@ -13,8 +14,6 @@ import 'package:movie_search_assistant/repositories/film_repository.dart';
 import 'package:movie_search_assistant/services/film_state_service.dart';
 import 'package:movie_search_assistant/services/global_api_service.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// TODO: Реализовать пордгрузку из локального хранилища
 
 class FilmController extends GetxController {
   FilmController({
@@ -30,6 +29,7 @@ class FilmController extends GetxController {
   final globalNetworkController = Get.find<GlobalNetworkController>();
 
   var film = (null as Film?).obs;
+  var filmCard = (null as FilmCard?).obs;
   var imagesFilm = (null as ImageResponse?).obs;
   var filmIdKp = (null as int?).obs;
 
@@ -42,23 +42,18 @@ class FilmController extends GetxController {
 
   @override
   void onInit() async {
+
+    await _loadFromStorage();
+
+    if (film.value == null && globalNetworkController.isConnectedToInternet.value) {
+      await _loadFromApi();
+    }
     
     ever(globalNetworkController.isConnectedToInternet, (hasInternet) async {
-      if (hasInternet && 
-          film.value == null && 
-          !isLoading.value && 
-          !isErrorConnection.value) {
-        await getIdFilm();
-        await getFilmWatchStatus();
+      if (hasInternet && film.value == null) {
+        await _loadFromApi();
       }
     });
-
-    if (globalNetworkController.isConnectedToInternet.value) {
-      await getIdFilm();
-      await getFilmWatchStatus();
-    } else {
-      isLoading.value = false;
-    }
 
     ever(FilmStateService.to.updatedFilmIds, (Set<int> updatedIds) {
       if (updatedIds.contains(idFilm)) {
@@ -69,10 +64,99 @@ class FilmController extends GetxController {
     super.onInit();
   }
 
-  Future<void> resetAndReload() async{
-    if (globalNetworkController.isConnectedToInternet.value) {
+  Future<void> _loadFromStorage() async {
+    try{
+      filmCard.value = await filmRepository.getFilmFromStorage(idFilm);
+      if (filmCard.value != null) {
+        film.value = filmCardToFilm(filmCard.value!);
+        selectedRadioValue.value = filmCard.value!.watchStatus ?? WatchStatuses.DONT_WATCH;
+      }
+    } catch(e){
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> _loadFromApi() async {
+    isLoading.value = true;
+    try {
       await getIdFilm();
       await getFilmWatchStatus();
+      await getImagesIdFilm();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Film filmCardToFilm(FilmCard card) {
+    return Film(
+      (b) => b
+        ..kinopoiskId = card.kinopoiskId
+        ..kinopoiskHDId = null
+        ..imdbId = null
+        ..nameRu = card.nameRu
+        ..nameEn = null
+        ..nameOriginal = card.nameOriginal
+        ..posterUrl = card.posterUrl
+        ..posterUrlPreview = " "
+        ..coverUrl = null
+        ..logoUrl = null
+        ..reviewsCount = 0
+        ..ratingGoodReview = null
+        ..ratingGoodReviewVoteCount = null
+        ..ratingKinopoisk = card.ratingKinopoisk?.toDouble()
+        ..ratingKinopoiskVoteCount = card.ratingKinopoiskVoteCount
+        ..ratingImdb = card.ratingImdb?.toDouble()
+        ..ratingImdbVoteCount = card.ratingImdbVoteCount
+        ..ratingFilmCritics = null
+        ..ratingFilmCriticsVoteCount = null
+        ..ratingAwait = null
+        ..ratingAwaitCount = null
+        ..ratingRfCritics = null
+        ..ratingRfCriticsVoteCount = null
+        ..webUrl = card.webUrl
+        ..year = card.year
+        ..filmLength = null
+        ..slogan = card.slogan
+        ..description = card.description
+        ..shortDescription = null
+        ..editorAnnotation = null
+        ..isTicketsAvailable = false
+        ..productionStatus = null
+        ..type = FilmTypeEnum.FILM
+        ..ratingMpaa = null
+        ..ratingAgeLimits = null
+        ..countries.replace(
+          (card.countries ?? []).map((c) => $Country((cb) => cb..country = c)).toBuiltList(),
+        )
+        ..genres.replace(
+          (card.genres ?? []).map((g) => Genre((gb) => gb..genre = g)).toBuiltList(),
+        )
+        ..startYear = card.startYear
+        ..endYear = card.endYear
+        ..serial = card.serial
+        ..shortFilm = null
+        ..completed = null
+        ..hasImax = null
+        ..has3D = null
+        ..lastSync = ""        
+    );
+  }
+
+  Future<void> resetAndReload() async{
+    isLoading.value = true;
+    try{
+      if (globalNetworkController.isConnectedToInternet.value) {
+        await getIdFilm();
+        await getFilmWatchStatus();
+        await getImagesIdFilm();
+        await saveFilmInCollection();
+      }
+    } catch(e){
+      log(e.toString());
+      rethrow;
+    } finally{
+      isLoading.value = false;
     }
   }
 
@@ -80,7 +164,7 @@ class FilmController extends GetxController {
     try {
       await getFilmWatchStatus();
     } catch (e) {
-      log('Error refreshing film status: $e');
+      log('Не удалось обновить статус фильма: $e');
     }
   }
 
@@ -137,9 +221,17 @@ class FilmController extends GetxController {
 
   Future<void> saveFilmInCollection() async {
     try {
-      FilmCard filmCard = filmToFilmCard(film.value, imagesFilm.value, selectedRadioValue.value);
-      await filmRepository.addFilmInStorage(filmCard);
-      log("Добавлен фильм со статусом ${filmCard.watchStatus}");
+      if(!globalNetworkController.isConnectedToInternet.value){
+        filmCard.value!.watchStatus = selectedRadioValue.value;
+        await filmRepository.addFilmInStorage(filmCard.value!);
+      } else{
+        // TODO: Загрузка 5 скриншотов фильма -> Подумать над целесообразностью
+        List<String> imagesList = imagesFilm.value == null ? [] : imagesFilmToList(imagesFilm.value!);
+        List<Uint8List?> imageBytesList = imagesList.isEmpty ? [] : await getImageFilmBytesList(imagesList);
+        Uint8List? posterBytes = await getFilmPosterBytes(film.value!.posterUrl);
+        FilmCard filmCard = filmToFilmCard(film.value, imagesFilm.value, posterBytes, imageBytesList, selectedRadioValue.value);
+        await filmRepository.addFilmInStorage(filmCard);
+      }
       FilmStateService.to.notifyFilmUpdated(idFilm);
     } catch (e) {
       log(e.toString());
@@ -176,50 +268,93 @@ class FilmController extends GetxController {
       return false;
     }
   }
+
+  FilmCard filmToFilmCard(
+      Film? film, 
+      ImageResponse? imagesFilm,
+      Uint8List? posterBytes,
+      List<Uint8List?> imageBytesList, 
+      String? watchStatus) {
+    
+    FilmCard filmCard = FilmCard(
+      kinopoiskId: film?.kinopoiskId,
+      nameRu: film?.nameRu,
+      nameOriginal: film?.nameOriginal,
+      posterUrl: film?.posterUrl,
+      posterBytes: posterBytes,
+      ratingKinopoisk: film?.ratingKinopoisk == null ? null : film!.ratingKinopoisk!.toDouble(),
+      ratingKinopoiskVoteCount: film?.ratingKinopoiskVoteCount,
+      ratingImdb: film?.ratingImdb == null ? null : film!.ratingImdb!.toDouble(),
+      ratingImdbVoteCount: film?.ratingImdbVoteCount,
+      countries: film?.countries == null ? null : countriesToList(film!.countries),
+      genres: film?.genres == null ? null : genresToList(film!.genres),
+      imagesFilm: imagesFilm == null ? null : imagesFilmToList(imagesFilm),
+      imagesFilmBytes: imageBytesList.isEmpty ? null : imageBytesList,
+      year: film?.year,
+      startYear: film?.startYear,
+      endYear: film?.endYear,
+      serial: film?.serial,
+      description: film?.description,
+      slogan: film?.slogan,
+      watchStatus: watchStatus ?? WatchStatuses.DONT_WATCH,
+      webUrl: film?.webUrl
+    );
+    return filmCard;
+  }
+
+  List<String> countriesToList(BuiltList<Country> countries) {
+    List<String> countriesList =
+        countries.map((country) => country.country).toList();
+    return countriesList;
+  }
+
+  List<String> genresToList(BuiltList<Genre> genres) {
+    List<String> genresList = genres.map((genre) => genre.genre).toList();
+    return genresList;
+  }
+
+  List<String> imagesFilmToList(ImageResponse imagesFilm) {
+    List<String> imagesFilmList = imagesFilm.items
+        .where((item) => item.imageUrl != null)
+        .map((item) => item.imageUrl!)
+        .toList();
+    return imagesFilmList;
+  }
+
+  Future<Uint8List?> getFilmPosterBytes(String imageUrl) async{
+    isLoading.value = true;
+    try{
+      Uint8List? imagesListBytes = await apiService.downloadImageAsBytes(imageUrl);
+      return imagesListBytes;
+    } catch(e){
+      log(e.toString());
+      rethrow;
+    } finally{
+      isLoading.value = false;
+    }
+  }
+
+  Future<List<Uint8List?>> getImageFilmBytesList(List<String> imageUrlList) async{
+    isLoading.value = true;
+    List<Uint8List?> imageBytesList = [];
+    try{
+      for(var url in imageUrlList){
+        if(imageBytesList.length == 5){
+          log("Загружено 5 фото -> выход");
+          return imageBytesList;
+        }
+        Uint8List? imageBytes = await apiService.downloadImageAsBytes(url);
+        imageBytesList.add(imageBytes);
+      }
+      return imageBytesList;
+    } catch(e){
+      log(e.toString());
+      rethrow;
+    } finally{
+      isLoading.value = false;
+    }
+  } 
 }
 
-FilmCard filmToFilmCard(Film? film, ImageResponse? imagesFilm, String? watchStatus) {
-  FilmCard filmCard = FilmCard(
-    kinopoiskId: film?.kinopoiskId,
-    nameRu: film?.nameRu,
-    nameOriginal: film?.nameOriginal,
-    posterUrl: film?.posterUrl,
-    ratingKinopoisk: film?.ratingKinopoisk == null
-        ? null
-        : film!.ratingKinopoisk!.toDouble(),
-    ratingKinopoiskVoteCount: film?.ratingKinopoiskVoteCount,
-    ratingImdb: film?.ratingImdb == null ? null : film!.ratingImdb!.toDouble(),
-    ratingImdbVoteCount: film?.ratingImdbVoteCount,
-    countries:
-        film?.countries == null ? null : countriesToList(film!.countries),
-    genres: film?.genres == null ? null : genresToList(film!.genres),
-    imagesFilm: imagesFilm == null ? null : imagesFilmToList(imagesFilm),
-    year: film?.year,
-    startYear: film?.startYear,
-    endYear: film?.endYear,
-    serial: film?.serial,
-    description: film?.description,
-    slogan: film?.slogan,
-    watchStatus: watchStatus ?? WatchStatuses.DONT_WATCH
-  );
-  return filmCard;
-}
 
-List<String> countriesToList(BuiltList<Country> countries) {
-  List<String> countriesList =
-      countries.map((country) => country.country).toList();
-  return countriesList;
-}
 
-List<String> genresToList(BuiltList<Genre> genres) {
-  List<String> genresList = genres.map((genre) => genre.genre).toList();
-  return genresList;
-}
-
-List<String> imagesFilmToList(ImageResponse imagesFilm) {
-  List<String> imagesFilmList = imagesFilm.items
-      .where((item) => item.imageUrl != null)
-      .map((item) => item.imageUrl!)
-      .toList();
-  return imagesFilmList;
-}

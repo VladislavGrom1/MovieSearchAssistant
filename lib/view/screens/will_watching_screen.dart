@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -34,9 +33,7 @@ class WillWatchingScreen extends GetView<WillWatchingController>{
       ),
       backgroundColor: AppColors.primaryThemeBlack,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(left: 20.w, right: 20.w),
-          child: Obx(() {
+        child: Obx(() {
             final films = controller.filmsWillWatch.value;
           
             if (films == null) {
@@ -68,7 +65,6 @@ class WillWatchingScreen extends GetView<WillWatchingController>{
             );
           }
           ),
-        )
       )
     );
   }
