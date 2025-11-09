@@ -8,7 +8,7 @@ import 'package:movie_search_assistant/controllers/will_watching_controller.dart
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
-import 'package:movie_search_assistant/view/widgets/custom_alert_widget.dart';
+import 'package:movie_search_assistant/view/widgets/custom_warning_widget.dart';
 import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
 import 'package:movie_search_assistant/view/widgets/preview_film_card.dart';
 
@@ -51,7 +51,7 @@ class WillWatchingScreen extends GetView<WillWatchingController>{
           
             if (films.isEmpty) {
               return Center(
-                child: CustomAlertWidget(description: "Для сохранения фильма - измените его статус просмотра"),
+                child: CustomWarningWidget(description: "Для сохранения фильма - измените его статус просмотра"),
               );
             }
           

@@ -17,8 +17,6 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-// TODO: Импорт/Экспорт данных
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

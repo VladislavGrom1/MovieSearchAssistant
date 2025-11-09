@@ -6,7 +6,7 @@ import 'package:movie_search_assistant/controllers/watched_library_controller.da
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
-import 'package:movie_search_assistant/view/widgets/custom_alert_widget.dart';
+import 'package:movie_search_assistant/view/widgets/custom_warning_widget.dart';
 import 'package:movie_search_assistant/view/widgets/preview_film_card.dart';
 
 class WatchedLibraryScreen extends GetView<WatchedLibraryController>{
@@ -48,7 +48,7 @@ class WatchedLibraryScreen extends GetView<WatchedLibraryController>{
           
             if (films.isEmpty) {
               return Center(
-                child: CustomAlertWidget(description: "Для сохранения фильма - измените его статус просмотра"),
+                child: CustomWarningWidget(description: "Для сохранения фильма - измените его статус просмотра"),
               );
             }
           

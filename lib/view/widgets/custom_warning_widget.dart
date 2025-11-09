@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 
-class CustomAlertWidget extends StatelessWidget {
-  CustomAlertWidget({
+class CustomWarningWidget extends StatelessWidget {
+  CustomWarningWidget({
     super.key,
     required this.description,
   });

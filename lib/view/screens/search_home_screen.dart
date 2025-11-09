@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:movie_search_assistant/constants/navigator_ids.dart';
@@ -6,9 +7,11 @@ import 'package:movie_search_assistant/controllers/search_home_controller.dart';
 import 'package:movie_search_assistant/infrastructure/navigation/routes.dart';
 import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
+import 'package:movie_search_assistant/view/widgets/custom_dialog_widget.dart';
 import 'package:movie_search_assistant/view/widgets/custom_error_widget.dart';
 import 'package:movie_search_assistant/view/widgets/custom_search_bar.dart';
 import 'package:movie_search_assistant/view/widgets/home_movie_preview_card.dart';
+import 'package:movie_search_assistant/view/widgets/user_on_close_interaction_widget.dart';
 
 class SearchHomeScreen extends GetView<SearchHomeController> {
   const SearchHomeScreen({super.key});
@@ -16,51 +19,51 @@ class SearchHomeScreen extends GetView<SearchHomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-            padding: EdgeInsets.only(left: 20.w, right: 20.w),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(height: 10.h),
-                  CustomSearchBar(
-                      textEditingController:
-                          controller.searchTextEditingController),
-                  SizedBox(height: 13.h),
-                  Expanded(
-                    child: RefreshIndicator(
-                      backgroundColor: AppColors.secondaryThemeGrey,
-                      color: AppColors.primaryTextWhite,
-                      onRefresh: () async {
-                        await controller.getAllCollectionsFilms();
-                      },
-                      child: Obx(() {
-                        if(!controller.globalNetworkController.isConnectedToInternet.value){
-                          return CustomErrorWidget(statusCode: 0);
+        body: SafeArea(
+          child: Padding(
+              padding: EdgeInsets.only(left: 20.w, right: 20.w),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10.h),
+                    CustomSearchBar(
+                        textEditingController:
+                            controller.searchTextEditingController),
+                    SizedBox(height: 13.h),
+                    Expanded(
+                      child: RefreshIndicator(
+                        backgroundColor: AppColors.secondaryThemeGrey,
+                        color: AppColors.primaryTextWhite,
+                        onRefresh: () async {
+                          await controller.getAllCollectionsFilms();
+                        },
+                        child: Obx(() {
+                          if(!controller.globalNetworkController.isConnectedToInternet.value){
+                            return CustomErrorWidget(statusCode: 0);
+                          }
+      
+                          if(controller.isErrorConnection.value){
+                            return CustomErrorWidget(statusCode: controller.statusCode.value);
+                          }
+      
+                          if (controller.isLoading.value) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+      
+                          return ListView.separated(
+                            itemBuilder: (context, index) => categoryFilms(controller.collectionNames[index]), 
+                            separatorBuilder: (context, index) => SizedBox(height: 16.h), 
+                            itemCount: controller.collectionNames.length
+                          );
+                          
                         }
-
-                        if(controller.isErrorConnection.value){
-                          return CustomErrorWidget(statusCode: controller.statusCode.value);
-                        }
-
-                        if (controller.isLoading.value) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-
-                        return ListView.separated(
-                          itemBuilder: (context, index) => categoryFilms(controller.collectionNames[index]), 
-                          separatorBuilder: (context, index) => SizedBox(height: 16.h), 
-                          itemCount: controller.collectionNames.length
-                        );
-                        
-                      }
-                    )
-                  ),
-                )
-              ]
-            )
-          ),
+                      )
+                    ),
+                  )
+                ]
+              )
+            ),
       ),
     );
   }

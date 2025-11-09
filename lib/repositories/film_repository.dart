@@ -32,9 +32,20 @@ class FilmRepository extends GetxController{
     }
   }
 
-  Future<FilmCard?> getFilmFromStorage(int kinopoiskId) async{
+  Future<void> removeAllFilmsFromStorage() async{
     try{
-      FilmCard? film = await _filmStorage.getFilm(kinopoiskId);
+      await _filmStorage.removeAllFilms();
+    } on StorageException catch(e){
+      log(e.message);
+    } catch(e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<FilmCard?> getFilmFromStorage(int? kinopoiskId) async{
+    try{
+      FilmCard? film = await _filmStorage.getFilm(kinopoiskId ?? 0);
       return film;
     } on StorageException catch(e){
       log(e.message);
@@ -102,7 +113,7 @@ class FilmRepository extends GetxController{
     return null;
   }
 
-  Future<bool> filmIsExistInStorage(int kinopoiskId) async{
+  Future<bool> filmIsExistInStorage(int? kinopoiskId) async{
     try{
       FilmCard? film = await getFilmFromStorage(kinopoiskId);
       if(film != null){

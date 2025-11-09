@@ -26,6 +26,16 @@ class FilmStorage {
     }
   }
 
+  Future<void> removeAllFilms() async{
+    try{
+      final filmsBox = Hive.box<FilmCard>(HiveStorageKeys.userFilmsKeyBox);
+      await filmsBox.clear();
+    } catch(e){
+      log(e.toString());
+      throw StorageException(e.toString());
+    }
+  }
+
   Future<List<FilmCard>?> getAllFilms() async{
     try{
       final filmsBox = Hive.box<FilmCard>(HiveStorageKeys.userFilmsKeyBox);

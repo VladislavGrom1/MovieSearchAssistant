@@ -166,8 +166,10 @@ class ChangeApiKeyScreen extends GetView<ChangeApiKeyController> {
                                   bool apiKeyIsValid = await controller.entryApiKey();
 
                                   if (apiKeyIsValid) {
-                                    CustomSnackBar.showSuccess(title: "Успешно", message: "API Key успешно сохранён");
+                                    //CustomSnackBar.showSuccess(title: "Успешно", message: "API Key успешно сохранён");
                                     Get.back(id: NavigatorIds.userProfile, result: true);
+                                    Future.delayed(Duration(seconds: 1));
+                                    CustomSnackBar.showSuccess(title: "Успешно", message: "API Key успешно сохранён");
                                   } else {
                                     CustomSnackBar.showError(title: "Ошибка", message: "Пожалуйста, проверьте корректность API Key");
                                     return;

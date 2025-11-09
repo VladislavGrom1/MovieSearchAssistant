@@ -29,37 +29,37 @@ class FilmScreen extends StatelessWidget {
     final controller = Get.find<FilmController>(tag: tag);
 
     return Scaffold(
-      body: RefreshIndicator(
-        backgroundColor: AppColors.secondaryThemeGrey,
-        color: AppColors.primaryTextWhite,
-        onRefresh: () async {
-          await controller.resetAndReload();
-        },
-        child: Obx(() {
-          final hasInternetConnection = controller.globalNetworkController.isConnectedToInternet.value;
-          final isSavedInStorage = controller.filmCard.value != null;
-          final hasServerErrorConnection = controller.isErrorConnection.value;
-
-          if (!hasInternetConnection && !isSavedInStorage) {
-            return _errorWidget(controller);
-          }
-
-          if (hasServerErrorConnection) {
-            return _errorWidget(controller);
-          }
-
-          if (controller.isLoading.value) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return CustomScrollView(
-              slivers: [
-                _sliverAppBarWidget(controller),
-                _sliverListWidget(controller)
-              ],
-            );
-          }
-        }),
-      ),
+        body: RefreshIndicator(
+          backgroundColor: AppColors.secondaryThemeGrey,
+          color: AppColors.primaryTextWhite,
+          onRefresh: () async {
+            await controller.resetAndReload();
+          },
+          child: Obx(() {
+            final hasInternetConnection = controller.globalNetworkController.isConnectedToInternet.value;
+            final isSavedInStorage = controller.filmCard.value != null;
+            final hasServerErrorConnection = controller.isErrorConnection.value;
+      
+            if (!hasInternetConnection && !isSavedInStorage) {
+              return _errorWidget(controller);
+            }
+      
+            if (hasServerErrorConnection) {
+              return _errorWidget(controller);
+            }
+      
+            if (controller.isLoading.value) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              return CustomScrollView(
+                slivers: [
+                  _sliverAppBarWidget(controller),
+                  _sliverListWidget(controller)
+                ],
+              );
+            }
+          }),
+        ),
     );
   }
 
