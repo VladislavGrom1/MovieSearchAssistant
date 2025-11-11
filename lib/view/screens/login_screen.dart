@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,10 +10,7 @@ import 'package:movie_search_assistant/view/themes/colors.dart';
 import 'package:movie_search_assistant/view/themes/custom_text_styles.dart';
 import 'package:movie_search_assistant/view/widgets/custom_dialog_widget.dart';
 import 'package:movie_search_assistant/view/widgets/custom_snack_bar.dart';
-import 'package:movie_search_assistant/view/widgets/user_on_close_interaction_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// TODO: Когда открывается клавиатура UI выходит за границы
 
 class LoginScreen extends GetView<LoginController> {
   @override
@@ -96,6 +92,7 @@ class LoginScreen extends GetView<LoginController> {
                             textAlign: TextAlign.center)),
                     SizedBox(height: 20.h),
                     TextFormField(
+                      key: Key("apiTextFormField"),
                       controller: controller.textEditingController,
                       style: CustomTextStyles.m3BodyLarge(
                           color: AppColors.primaryScheme),

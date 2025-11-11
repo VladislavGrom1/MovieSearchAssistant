@@ -18,7 +18,6 @@ class DiInit {
     Get.put(FilmRepository());
     Get.put(GlobalApiService());
     Get.put(RootController());
-    Get.put(LoginController());
     Get.put(FilmStateService());
   }
 }

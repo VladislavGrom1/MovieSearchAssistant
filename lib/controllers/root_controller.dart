@@ -8,7 +8,7 @@ class RootController extends GetxController{
   @override 
   void onReady() async{
     super.onReady();
-    //await userRepository.removeUserApiKeyFromStorage();
+    await userRepository.removeUserApiKeyFromStorage();
     await userEntriedApiKey();
   }
 

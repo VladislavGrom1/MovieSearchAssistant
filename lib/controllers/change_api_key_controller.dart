@@ -23,8 +23,6 @@ class ChangeApiKeyController extends GetxController{
     super.onInit();
   }
 
-  // TODO: Не происходит обновления API KEY если зайти без Api Key + если писать русские символы -> краш
-
   Future<bool> entryApiKey() async{
     try{
       bool apiKeyIsValid = await apiService.validateApiKey(textEditingController.text);

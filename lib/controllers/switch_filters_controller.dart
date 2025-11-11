@@ -57,7 +57,7 @@ class SwitchFiltersController extends GetxController{
       final yearFrom = int.tryParse(parts[0]) ?? 1000;
       final yearsTo = int.tryParse(parts[1]) ?? 3000;
       return [yearFrom, yearsTo];
-    } else{
+    } else {
       final year = int.tryParse(filterValues["Годы"].toString()) ?? DateTime.now().year;
       return [year, year];
     }

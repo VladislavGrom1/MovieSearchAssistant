@@ -33,7 +33,6 @@ class StorageManager extends GetxService{
     try{
       final userFilmsBox = Hive.box<FilmCard>(HiveStorageKeys.userFilmsKeyBox);
       await userFilmsBox.clear();
-      log("Хранилище успешно очищено");
     } catch(e){
       log(e.toString());
       throw StorageException(e.toString());
