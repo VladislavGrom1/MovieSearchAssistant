@@ -22,8 +22,6 @@ class UserProfileController extends GetxController{
     super.onInit();
   }
 
-  //  TODO: Дореализовать импорт/экспорт данных + протестить, правильно ли установятся статусы у фильмов на других экранах
-
   Future<void> getUserApiKey() async{
     isLoading.value = true;
     try{

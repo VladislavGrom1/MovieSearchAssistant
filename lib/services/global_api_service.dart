@@ -84,8 +84,6 @@ class GlobalApiService extends GetxController{
     }
   }
 
-// "aa5aaded-6a89-4485-b6ce-a3b32ee2aa89"
-
   Future<String?> getUserApiKey() async {
     try{
       String? apiKey = await userStorage.getUserApiKey();

@@ -1,16 +1,41 @@
-# movie_search_assistant
+# Movie Search Assistant - v1.0.0
 
-A new Flutter project.
+Мобильное приложение для поиска фильмов, управления коллекциями и просмотра подробной информации о фильмах.
 
-## Getting Started
+<img src="./docs/app_screens.png" width="1000" />
 
-This project is a starting point for a Flutter application.
+## Kinopoisk Api Unofficial
+Для доступа к актуальной информации сервиса "Кинопоиск" используется неофициальное API - [Kinopoisk Api Unofficial](https://kinopoiskapiunofficial.tech)
 
-A few resources to get you started if this is your first Flutter project:
+<img src="./docs/api.png" width="1000" />
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+_❗️ВАЖНО: Для использования главных возможностей мобильного приложения необходимо зарегистрироваться на сайте [Kinopoisk Api Unofficial](https://kinopoiskapiunofficial.tech) для получения личного API Key_
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+_Примечание: Для обычных пользователей лимит запросов в мобильном приложении составляет - 500 запросов_
+
+## Возможности мобильного приложения
+_❗️ВАЖНО: Для использования главных возможностей мобильного приложения необходимо подключение к интернету и ввод API Key_
+
+- Поиск фильмов по ключевому слову, фильтрам (страна, год выхода, жанр)
+- Просмотр готовых коллекций фильмов (популярные фильмы, сериалы, топ 250)
+- Просмотр подробной информации о каждом фильме (описание, рейтинг, кадры из фильма)
+- Сохранение фильмов в личные коллекции ("Буду смотреть", "Просмотрено")
+
+_Примечание: Сохранение фильмов осуществляется в локальное хранилище устройства_
+- Экспорт/импорт коллекций фильмов в виде файла формата ".json"
+- Просмотр коллекций "Буду смотреть" и "Просмотрено" и подробной информации о каждом фильме
+
+_Примечание: Просмотр сохраненных фильмов доступен без интернет-соединения_
+- Изменение API Key
+- Очистка коллекций фильмов
+
+## Зависимости проекта
+Flutter 3.35.4 • channel stable • https://github.com/flutter/flutter.git
+
+Dart 3.9.2
+
+DevTools 2.48.0
+
+
+
+
